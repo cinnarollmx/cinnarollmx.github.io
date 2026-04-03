@@ -1252,36 +1252,126 @@ function showPopup(word, x, y) {
   let left = Math.max(8, Math.min(x-pw/2, vw-pw-8));
   let top  = y-ph-14; if(top<8) top=y+38; if(top+ph>vh-8) top=vh-ph-8;
   pop.style.cssText = `left:${left}px;top:${top}px;display:block`;
-  doTranslate(word);
+  // setTimeout(0) wajib — mencegah konflik postMessage dari epub.js iframe
+  setTimeout(() => doTranslate(word), 0);
 }
 function closePopup() { document.getElementById('dict-popup').style.display='none'; }
 
+// Fetch tanpa AbortController (tidak kompatibel dengan konteks epub iframe)
+function safeFetch(url, opts) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error('timeout')), 7000);
+    fetch(url, opts || {})
+      .then(r => { clearTimeout(timer); resolve(r); })
+      .catch(e => { clearTimeout(timer); reject(e); });
+  });
+}
+
+// Lemmatisasi sederhana untuk fallback
+function lemmatize(w) {
+  if (w.length > 5 && w.endsWith('ing')) return w.slice(0, -3);
+  if (w.length > 4 && w.endsWith('ed'))  return w.slice(0, -2);
+  if (w.length > 3 && w.endsWith('s'))   return w.slice(0, -1);
+  return w;
+}
+
+// Render isi popup dengan terjemahan yang sudah didapat
+function renderPopup(clean, tr) {
+  const saved = vocab.some(v => v.en.toLowerCase() === clean.toLowerCase());
+  const trOk  = tr && tr !== 'Terjemahan tidak ditemukan';
+  document.getElementById('popup-body').innerHTML = `
+    <div style="font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Bahasa Indonesia</div>
+    <div class="popup-trans" id="popup-tr-display">${esc(tr)}</div>
+    <div class="popup-actions">
+      ${saved
+        ? `<span style="font-size:.76rem;color:var(--green);padding:6px 10px;font-weight:500">✓ Tersimpan</span>`
+        : `<button class="btn btn-primary" style="font-size:.76rem;padding:7px 13px"
+             onclick="saveFC('${esc(clean)}','${esc(trOk ? tr : '')}')">💾 Simpan</button>`}
+      <button class="btn btn-ghost" style="font-size:.76rem;padding:7px 13px"
+        onclick="showManualEdit('${esc(clean)}','${esc(trOk ? tr : '')}')">✏️ Edit</button>
+      <button class="btn btn-ghost" style="font-size:.76rem;padding:7px 13px" onclick="closePopup()">Tutup</button>
+    </div>`;
+}
+
+// Form edit manual
+function showManualEdit(clean, currentTr) {
+  document.getElementById('popup-body').innerHTML = `
+    <div style="font-size:.72rem;color:var(--text3);margin-bottom:6px">Edit terjemahan manual:</div>
+    <input id="manual-tr-input" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:7px 10px;font-size:.88rem;font-family:'DM Sans',sans-serif;background:var(--bg2);color:var(--text);outline:none;margin-bottom:8px"
+      placeholder="Ketik arti…" value="${esc(currentTr)}">
+    <div class="popup-actions">
+      <button class="btn btn-primary" style="font-size:.76rem;padding:7px 13px"
+        onclick="saveFC('${esc(clean)}', document.getElementById('manual-tr-input').value.trim())">💾 Simpan</button>
+      <button class="btn btn-ghost" style="font-size:.76rem;padding:7px 13px"
+        onclick="renderPopup('${esc(clean)}','${esc(currentTr)}')">← Kembali</button>
+    </div>`;
+  setTimeout(() => document.getElementById('manual-tr-input')?.focus(), 50);
+}
+
 async function doTranslate(word) {
-  const clean = word.replace(/[^a-zA-Z\s'\-]/g,'').trim();
+  const clean = word.replace(/[^a-zA-Z\s'\-]/g, '').trim();
   if (!clean) {
-    document.getElementById('popup-body').innerHTML = `<div class="popup-trans" style="color:var(--text3)">Pilih kata berbahasa Inggris.</div><div class="popup-actions"><button class="btn btn-ghost" style="font-size:.78rem" onclick="closePopup()">Tutup</button></div>`;
+    document.getElementById('popup-body').innerHTML =
+      `<div class="popup-trans" style="color:var(--text3)">Pilih kata berbahasa Inggris.</div>
+       <div class="popup-actions"><button class="btn btn-ghost" style="font-size:.78rem" onclick="closePopup()">Tutup</button></div>`;
     return;
   }
+
+  // ── Sumber 1: MyMemory ──
   try {
-    const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(clean)}&langpair=en|id`);
-    const d   = await res.json();
-    let tr = 'Terjemahan tidak ditemukan';
-    if (d.responseStatus===200 && d.responseData?.translatedText) {
-      tr = d.responseData.translatedText;
-      if (tr.toLowerCase()===clean.toLowerCase()) tr='Terjemahan tidak ditemukan';
+    const res = await safeFetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(clean)}&langpair=en%7Cid`);
+    if (res.ok) {
+      const d = await res.json();
+      if (d.responseStatus === 200 && d.responseData?.translatedText) {
+        const tr = d.responseData.translatedText.trim();
+        if (tr && tr.toLowerCase() !== clean.toLowerCase() && !/PLEASE SELECT/i.test(tr)) {
+          renderPopup(clean, tr);
+          return;
+        }
+      }
     }
-    const saved = vocab.some(v=>v.en.toLowerCase()===clean.toLowerCase());
-    document.getElementById('popup-body').innerHTML = `
-      <div class="popup-trans">${esc(tr)}</div>
-      <div class="popup-actions">
-        ${saved
-          ? `<span style="font-size:.76rem;color:var(--green);padding:6px 10px;font-weight:500">✓ Tersimpan</span>`
-          : `<button class="btn btn-primary" style="font-size:.76rem;padding:7px 13px" onclick="saveFC('${esc(clean)}','${esc(tr)}')">💾 Simpan ke Flashcard</button>`}
-        <button class="btn btn-ghost" style="font-size:.76rem;padding:7px 13px" onclick="closePopup()">Tutup</button>
-      </div>`;
-  } catch(err) {
-    document.getElementById('popup-body').innerHTML = `<div class="popup-trans" style="color:var(--accent)">Gagal terhubung ke server.</div><div class="popup-actions"><button class="btn btn-ghost" style="font-size:.76rem" onclick="closePopup()">Tutup</button></div>`;
+  } catch(e) { console.warn('MyMemory:', e.message); }
+
+  // ── Sumber 2: LibreTranslate (instance publik, CORS terbuka) ──
+  const hosts = ['https://translate.terraprint.co', 'https://lt.vern.cc'];
+  for (const host of hosts) {
+    try {
+      const res = await safeFetch(`${host}/translate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ q: clean, source: 'en', target: 'id', format: 'text' })
+      });
+      if (res.ok) {
+        const d = await res.json();
+        const tr = (d.translatedText || '').trim();
+        if (tr && tr.toLowerCase() !== clean.toLowerCase()) {
+          renderPopup(clean, tr);
+          return;
+        }
+      }
+    } catch(e) { console.warn(`LibreTranslate ${host}:`, e.message); }
   }
+
+  // ── Sumber 3: Coba kata dasar (lemma) di MyMemory ──
+  const lem = lemmatize(clean.toLowerCase());
+  if (lem !== clean.toLowerCase()) {
+    try {
+      const res = await safeFetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(lem)}&langpair=en%7Cid`);
+      if (res.ok) {
+        const d = await res.json();
+        if (d.responseStatus === 200 && d.responseData?.translatedText) {
+          const tr = d.responseData.translatedText.trim();
+          if (tr && tr.toLowerCase() !== lem && !/PLEASE SELECT/i.test(tr)) {
+            renderPopup(clean, tr);
+            return;
+          }
+        }
+      }
+    } catch(e) {}
+  }
+
+  // ── Semua sumber gagal → tampilkan form manual ──
+  renderPopup(clean, 'Terjemahan tidak ditemukan');
 }
 
 document.addEventListener('click', e => {

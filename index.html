@@ -3,627 +3,344 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>LexiRead Pro</title>
+<title>LexiRead Pro v2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
 <style>
-/* ═══════════════════════════════════════
-   TOKENS & THEMES
-═══════════════════════════════════════ */
+/* ═══ TOKENS & THEMES ═══ */
 :root {
-  /* App shell - Light theme default */
-  --bg:        #fdfcf8;
-  --bg2:       #f4f1eb;
-  --bg3:       #ede8dc;
-  --border:    #ddd8cc;
-  --text:      #2c2416;
-  --text2:     #5a4f3c;
-  --text3:     #9a8e78;
-  --accent:    #c0392b;
-  --accent-dk: #96281b;
-  --accent-lt: #f0ccc9;
-  --green:     #2d6a4f;
-  --green-lt:  #d8f3dc;
-  --overlay:   rgba(44,36,22,.5);
-
-  /* Reader content colors */
-  --r-bg:   #ffffff;
-  --r-text: #1a1a1a;
-
-  /* Shadows */
-  --sh-sm: 0 2px 8px rgba(0,0,0,.08);
-  --sh-md: 0 4px 20px rgba(0,0,0,.12);
-  --sh-lg: 0 12px 48px rgba(0,0,0,.18);
-  --sh-card: 0 6px 30px rgba(44,36,22,.15), 0 2px 8px rgba(44,36,22,.08);
-
-  /* Radii */
-  --r-sm: 8px;
-  --r-md: 14px;
-  --r-lg: 20px;
-  --r-xl: 28px;
-
-  --tr: all .22s cubic-bezier(.4,0,.2,1);
+  --bg:#fdfcf8; --bg2:#f4f1eb; --bg3:#ede8dc; --border:#ddd8cc;
+  --text:#2c2416; --text2:#5a4f3c; --text3:#9a8e78;
+  --accent:#c0392b; --accent-dk:#96281b; --accent-lt:#f0ccc9;
+  --green:#2d6a4f; --green-lt:#d8f3dc;
+  --overlay:rgba(44,36,22,.5);
+  --r-bg:#ffffff; --r-text:#1a1a1a;
+  --sh-sm:0 2px 8px rgba(0,0,0,.08); --sh-md:0 4px 20px rgba(0,0,0,.12);
+  --sh-lg:0 12px 48px rgba(0,0,0,.18);
+  --sh-card:0 6px 30px rgba(44,36,22,.15), 0 2px 8px rgba(44,36,22,.08);
+  --r-sm:8px; --r-md:14px; --r-lg:20px; --r-xl:28px;
+  --tr:all .22s cubic-bezier(.4,0,.2,1);
 }
-
-/* SEPIA theme */
 [data-theme="sepia"] {
-  --bg:      #f8f2e4;
-  --bg2:     #f0e8d4;
-  --bg3:     #e4d9c4;
-  --border:  #d4c8b0;
-  --text:    #3d2b1f;
-  --text2:   #6b4c35;
-  --text3:   #a08060;
-  --r-bg:    #fdf6e3;
-  --r-text:  #3d2b1f;
+  --bg:#f8f2e4; --bg2:#f0e8d4; --bg3:#e4d9c4; --border:#d4c8b0;
+  --text:#3d2b1f; --text2:#6b4c35; --text3:#a08060;
+  --r-bg:#fdf6e3; --r-text:#3d2b1f;
 }
-
-/* DARK theme */
 [data-theme="dark"] {
-  --bg:      #161616;
-  --bg2:     #1e1e1e;
-  --bg3:     #2a2a2a;
-  --border:  #363636;
-  --text:    #e8e0d0;
-  --text2:   #b0a898;
-  --text3:   #706860;
-  --accent:  #e05545;
-  --accent-lt: #4a1a15;
-  --overlay: rgba(0,0,0,.7);
-  --sh-lg:   0 12px 48px rgba(0,0,0,.5);
-  --r-bg:    #1a1a1a;
-  --r-text:  #d8d0c0;
+  --bg:#161616; --bg2:#1e1e1e; --bg3:#2a2a2a; --border:#363636;
+  --text:#e8e0d0; --text2:#b0a898; --text3:#706860;
+  --accent:#e05545; --accent-lt:#4a1a15; --overlay:rgba(0,0,0,.7);
+  --sh-lg:0 12px 48px rgba(0,0,0,.5); --r-bg:#1a1a1a; --r-text:#d8d0c0;
 }
 
-/* ═══════════════════════════════════════
-   RESET & BASE
-═══════════════════════════════════════ */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html { height: 100%; }
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  overflow-x: hidden;
-  transition: background .3s ease, color .3s ease;
-}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{height:100%}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s}
 
-/* ═══════════════════════════════════════
-   VIEWS
-═══════════════════════════════════════ */
-.view { display: none; }
-.view.active { display: flex; flex-direction: column; min-height: 100vh; }
+/* ═══ VIEWS ═══ */
+.view{display:none}
+.view.active{display:flex;flex-direction:column;min-height:100vh}
 
-/* ═══════════════════════════════════════
-   BUTTONS
-═══════════════════════════════════════ */
-.btn {
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 9px 18px; border-radius: 100px;
-  font-family: 'DM Sans', sans-serif; font-size: .85rem; font-weight: 500;
-  cursor: pointer; border: none; transition: var(--tr); white-space: nowrap;
-  text-decoration: none;
-}
-.btn-primary { background: var(--text); color: var(--bg); }
-.btn-primary:hover { opacity: .85; transform: translateY(-1px); box-shadow: var(--sh-md); }
-.btn-accent  { background: var(--accent); color: #fff; }
-.btn-accent:hover  { background: var(--accent-dk); transform: translateY(-1px); box-shadow: var(--sh-md); }
-.btn-ghost   { background: transparent; color: var(--text2); border: 1.5px solid var(--border); }
-.btn-ghost:hover   { background: var(--bg2); border-color: var(--text3); }
-.btn-icon    { width: 42px; height: 42px; border-radius: 50%; padding: 0; justify-content: center; font-size: 1.05rem; flex-shrink: 0; }
+/* ═══ BUTTONS ═══ */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;cursor:pointer;border:none;transition:var(--tr);white-space:nowrap;text-decoration:none}
+.btn-primary{background:var(--text);color:var(--bg)}
+.btn-primary:hover{opacity:.85;transform:translateY(-1px);box-shadow:var(--sh-md)}
+.btn-accent{background:var(--accent);color:#fff}
+.btn-accent:hover{background:var(--accent-dk);transform:translateY(-1px);box-shadow:var(--sh-md)}
+.btn-ghost{background:transparent;color:var(--text2);border:1.5px solid var(--border)}
+.btn-ghost:hover{background:var(--bg2);border-color:var(--text3)}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{opacity:.88;transform:translateY(-1px)}
+.btn-icon{width:42px;height:42px;border-radius:50%;padding:0;justify-content:center;font-size:1.05rem;flex-shrink:0}
 
-/* ═══════════════════════════════════════
-   LIBRARY
-═══════════════════════════════════════ */
-#lib-view { background: var(--bg); }
+/* ═══ LIBRARY ═══ */
+#lib-view{background:var(--bg)}
+.lib-header{padding:36px 44px 20px;display:flex;align-items:flex-end;justify-content:space-between;border-bottom:1px solid var(--border);gap:16px;flex-wrap:wrap;background:var(--bg)}
+.brand{display:flex;flex-direction:column;gap:3px}
+.brand-name{font-family:'Playfair Display',serif;font-size:2.1rem;color:var(--text);line-height:1;letter-spacing:-.03em}
+.brand-name span{color:var(--accent)}
+.brand-name sup{font-family:'DM Sans',sans-serif;font-size:.6rem;font-weight:600;letter-spacing:.08em;background:var(--accent);color:#fff;padding:2px 6px;border-radius:4px;vertical-align:super;margin-left:4px;text-transform:uppercase}
+.brand-sub{font-size:.72rem;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;font-weight:500}
+.header-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.lib-body{padding:32px 44px 64px;flex:1}
+.section-lbl{font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:24px;display:flex;align-items:center;gap:12px}
+.section-lbl::after{content:'';flex:1;height:1px;background:var(--border)}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 40px;text-align:center;gap:14px}
+.empty-icon{font-size:4.5rem;opacity:.25}
+.empty-title{font-family:'Lora',serif;font-size:1.5rem;color:var(--text2)}
+.empty-sub{color:var(--text3);font-size:.88rem;max-width:320px;line-height:1.6}
+.book-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:28px}
+.book-card{cursor:pointer;transition:var(--tr);position:relative}
+.book-card:hover{transform:translateY(-5px)}
+.book-card:hover .book-cover{box-shadow:var(--sh-lg)}
+.book-cover{width:100%;aspect-ratio:2/3;border-radius:5px 14px 14px 5px;overflow:hidden;background:var(--bg3);box-shadow:var(--sh-card),-4px 4px 0 rgba(44,36,22,.12);position:relative;transition:box-shadow .25s}
+.book-cover img{width:100%;height:100%;object-fit:cover}
+.book-cover-ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:18px}
+.cc0{background:linear-gradient(145deg,#c0392b,#922b21)}.cc1{background:linear-gradient(145deg,#2471a3,#1a5276)}.cc2{background:linear-gradient(145deg,#1e8449,#145a32)}.cc3{background:linear-gradient(145deg,#7d3c98,#6c3483)}.cc4{background:linear-gradient(145deg,#b7950b,#9a7d0a)}.cc5{background:linear-gradient(145deg,#784212,#6e2f1a)}
+.cover-t{font-family:'Lora',serif;font-size:.72rem;text-align:center;color:rgba(255,255,255,.9);line-height:1.35}
+.book-spine{position:absolute;left:0;top:0;bottom:0;width:7px;background:rgba(0,0,0,.18);border-radius:5px 0 0 5px}
+.book-del{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;background:rgba(192,57,43,.92);color:#fff;border:none;font-size:.8rem;cursor:pointer;display:none;align-items:center;justify-content:center;transition:var(--tr)}
+.book-card:hover .book-del{display:flex}
+.book-del:hover{background:var(--accent-dk);transform:scale(1.1)}
+.book-meta{margin-top:10px;padding:0 2px}
+.book-ttl{font-family:'Lora',serif;font-size:.82rem;font-weight:600;color:var(--text);line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.book-auth{font-size:.72rem;color:var(--text3);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.book-vocab-cnt{font-size:.68rem;color:var(--green);margin-top:2px;font-weight:500}
 
-.lib-header {
-  padding: 36px 44px 20px;
-  display: flex; align-items: flex-end; justify-content: space-between;
-  border-bottom: 1px solid var(--border);
-  gap: 16px; flex-wrap: wrap;
-  background: var(--bg);
-}
-.brand { display: flex; flex-direction: column; gap: 3px; }
-.brand-name {
-  font-family: 'Playfair Display', serif;
-  font-size: 2.1rem; color: var(--text); line-height: 1; letter-spacing: -.03em;
-}
-.brand-name span { color: var(--accent); }
-.brand-name sup {
-  font-family: 'DM Sans', sans-serif; font-size: .6rem; font-weight: 600;
-  letter-spacing: .08em; background: var(--accent); color: #fff;
-  padding: 2px 6px; border-radius: 4px; vertical-align: super; margin-left: 4px; text-transform: uppercase;
-}
-.brand-sub { font-size: .72rem; color: var(--text3); letter-spacing: .1em; text-transform: uppercase; font-weight: 500; }
+/* ═══ READER ═══ */
+#reader-view{background:var(--bg2);flex-direction:column}
+.rdr-toolbar{display:flex;align-items:center;gap:8px;padding:8px 16px;background:var(--bg);border-bottom:1px solid var(--border);z-index:20;flex-shrink:0;min-height:54px}
+.rdr-title{flex:1;font-family:'Lora',serif;font-size:.9rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;padding:0 8px}
+.rdr-controls{display:flex;align-items:center;gap:6px;flex-shrink:0}
+#toc-sidebar{position:fixed;left:0;top:0;bottom:0;width:300px;background:var(--bg);border-right:1px solid var(--border);z-index:100;transform:translateX(-100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:var(--sh-lg)}
+#toc-sidebar.open{transform:translateX(0)}
+.toc-header{display:flex;align-items:center;justify-content:space-between;padding:20px 20px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.toc-header h3{font-family:'Lora',serif;font-size:1rem;color:var(--text)}
+.toc-list{flex:1;overflow-y:auto;padding:10px 0}
+.toc-list::-webkit-scrollbar{width:4px}
+.toc-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.toc-item{display:block;padding:10px 20px;font-size:.85rem;color:var(--text2);cursor:pointer;transition:var(--tr);border:none;background:none;text-align:left;width:100%;line-height:1.4}
+.toc-item:hover{background:var(--bg2);color:var(--text)}
+.toc-item.toc-l2{padding-left:36px;font-size:.8rem;color:var(--text3)}
+.toc-item.toc-l3{padding-left:52px;font-size:.78rem;color:var(--text3)}
+.toc-overlay{position:fixed;inset:0;background:var(--overlay);z-index:99;display:none;backdrop-filter:blur(4px)}
+.toc-overlay.open{display:block}
+.rdr-container{flex:1;position:relative;overflow:hidden;display:flex;align-items:stretch;min-height:0}
+.rdr-nav{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:90px;background:rgba(253,252,248,.88);border:1.5px solid var(--border);color:var(--text2);font-size:1.2rem;cursor:pointer;z-index:10;display:flex;align-items:center;justify-content:center;transition:var(--tr);backdrop-filter:blur(10px)}
+[data-theme="dark"] .rdr-nav{background:rgba(22,22,22,.88)}
+#prev-btn{left:0;border-radius:0 10px 10px 0;border-left:none}
+#next-btn{right:0;border-radius:10px 0 0 10px;border-right:none}
+.rdr-nav:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+#epub-viewer{flex:1;overflow:hidden;position:relative}
+#epub-viewer iframe{border:none;width:100%!important;height:100%!important;display:block}
+.rdr-footer{display:flex;align-items:center;justify-content:center;gap:14px;padding:8px 24px;background:var(--bg);border-top:1px solid var(--border);flex-shrink:0}
+.prog-track{flex:1;max-width:420px;height:3px;background:var(--bg3);border-radius:3px;overflow:hidden;cursor:pointer}
+.prog-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .4s;width:0%}
+.pg-info{font-size:.72rem;color:var(--text3);font-weight:500;min-width:36px;text-align:right}
 
-.header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+/* ═══ SETTINGS ═══ */
+#settings-modal{position:fixed;inset:0;z-index:200;display:none;align-items:flex-end;justify-content:center}
+#settings-modal.open{display:flex}
+.settings-backdrop{position:absolute;inset:0;background:var(--overlay);backdrop-filter:blur(6px)}
+.settings-sheet{position:relative;z-index:1;background:var(--bg);border-radius:var(--r-xl) var(--r-xl) 0 0;width:100%;max-width:600px;padding:0 0 32px;box-shadow:0 -8px 40px rgba(0,0,0,.2);animation:slideUp .3s cubic-bezier(.34,1.2,.64,1);max-height:85vh;overflow-y:auto}
+@keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.settings-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:14px auto 0}
+.settings-title{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--text);padding:16px 24px 0;margin-bottom:4px}
+.settings-section{padding:16px 24px 0}
+.settings-section-lbl{font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:12px}
+.settings-divider{height:1px;background:var(--border);margin:16px 24px 0}
+.theme-pills{display:flex;gap:10px}
+.theme-pill{flex:1;padding:10px 8px;border-radius:var(--r-md);border:2px solid var(--border);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;transition:var(--tr);background:var(--bg2)}
+.theme-pill:hover{border-color:var(--accent)}
+.theme-pill.active{border-color:var(--accent);background:var(--accent-lt)}
+.theme-swatch{width:36px;height:24px;border-radius:6px;border:1px solid rgba(0,0,0,.1)}
+.ts-light{background:#fff}.ts-sepia{background:#fdf6e3}.ts-dark{background:#1a1a1a}
+.theme-pill span{font-size:.75rem;color:var(--text2);font-weight:500}
+.font-btns{display:flex;gap:8px;flex-wrap:wrap}
+.font-btn{padding:8px 16px;border-radius:100px;border:1.5px solid var(--border);background:var(--bg2);cursor:pointer;transition:var(--tr);font-size:.82rem;color:var(--text2)}
+.font-btn:hover{border-color:var(--accent)}
+.font-btn.active{background:var(--text);color:var(--bg);border-color:var(--text)}
+.ff-lora{font-family:'Lora',serif}.ff-inter{font-family:'Inter',sans-serif}.ff-dyslexic{font-family:'Comic Sans MS',cursive;letter-spacing:.02em}
+.fz-control{display:flex;align-items:center;gap:14px}
+.fz-val{font-family:'Lora',serif;font-size:1.3rem;font-weight:600;color:var(--text);min-width:54px;text-align:center}
+.fz-slider{flex:1;-webkit-appearance:none;appearance:none;height:4px;background:var(--bg3);border-radius:4px;outline:none}
+.fz-slider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 2px 8px rgba(192,57,43,.3)}
+.fz-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:none}
+.fz-step-btn{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border);background:var(--bg2);cursor:pointer;font-size:1.1rem;color:var(--text2);display:flex;align-items:center;justify-content:center;transition:var(--tr);flex-shrink:0}
+.fz-step-btn:hover{background:var(--text);color:var(--bg);border-color:var(--text)}
+.ls-btns,.margin-btns{display:flex;gap:8px}
+.ls-btn,.mg-btn{flex:1;padding:8px;border-radius:var(--r-sm);border:1.5px solid var(--border);background:var(--bg2);cursor:pointer;font-size:.78rem;color:var(--text2);text-align:center;transition:var(--tr)}
+.ls-btn:hover,.mg-btn:hover{border-color:var(--accent)}
+.ls-btn.active,.mg-btn.active{background:var(--text);color:var(--bg);border-color:var(--text)}
 
-.lib-body { padding: 32px 44px 64px; flex: 1; }
-.section-lbl {
-  font-size: .7rem; font-weight: 700; letter-spacing: .12em;
-  text-transform: uppercase; color: var(--text3); margin-bottom: 24px;
-  display: flex; align-items: center; gap: 12px;
+/* ═══ DICT POPUP (enhanced) ═══ */
+#dict-popup{
+  position:fixed;z-index:5000;background:var(--bg);
+  border:1.5px solid var(--border);border-radius:var(--r-lg);
+  width:340px;box-shadow:var(--sh-lg);display:none;
+  animation:popIn .18s cubic-bezier(.34,1.3,.64,1);
+  overflow:hidden;
 }
-.section-lbl::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+@keyframes popIn{from{opacity:0;transform:scale(.92) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.popup-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 14px 8px;border-bottom:1px solid var(--border);
+  background:var(--bg2);
+}
+.popup-lang-en{
+  font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);background:var(--accent-lt);padding:2px 7px;border-radius:100px;
+}
+.popup-word-main{font-family:'Lora',serif;font-size:1.05rem;font-weight:600;color:var(--text);flex:1;padding:0 8px;line-height:1.2}
+.popup-close{background:none;border:none;color:var(--text3);cursor:pointer;font-size:1rem;padding:2px 6px;border-radius:6px;transition:var(--tr);flex-shrink:0}
+.popup-close:hover{background:var(--bg3);color:var(--text)}
+.popup-body{padding:10px 14px}
+.popup-lang-id-lbl{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:4px}
+.popup-trans{font-size:.95rem;color:var(--text2);line-height:1.5;margin-bottom:2px}
+.popup-def{font-size:.8rem;color:var(--text3);line-height:1.5;margin-top:6px;font-style:italic;border-top:1px solid var(--border);padding-top:6px}
+.popup-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.popup-tag{font-size:.68rem;padding:2px 8px;border-radius:100px;background:var(--bg3);color:var(--text3)}
+.popup-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 14px 12px;border-top:1px solid var(--border)}
+.popup-load{display:flex;align-items:center;gap:8px;padding:14px;color:var(--text3);font-size:.85rem}
+.spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+.popup-manual-input{width:100%;border:1.5px solid var(--border);border-radius:var(--r-sm);padding:6px 10px;font-size:.85rem;font-family:'DM Sans',sans-serif;background:var(--bg2);color:var(--text);outline:none;margin-bottom:6px}
+.popup-manual-input:focus{border-color:var(--accent)}
+.popup-source-badge{font-size:.6rem;color:var(--text3);padding:1px 6px;background:var(--bg3);border-radius:100px}
 
-/* Empty state */
-.empty-state {
-  display: flex; flex-direction: column; align-items: center;
-  justify-content: center; padding: 80px 40px; text-align: center; gap: 14px;
+/* ═══ FLASHCARD VIEW ═══ */
+#fc-view{background:var(--bg)}
+.fc-header-bar{
+  display:flex;align-items:center;gap:12px;padding:16px 24px;
+  border-bottom:1px solid var(--border);background:var(--bg);
+  flex-shrink:0;flex-wrap:wrap;
 }
-.empty-icon { font-size: 4.5rem; opacity: .25; }
-.empty-title { font-family: 'Lora', serif; font-size: 1.5rem; color: var(--text2); }
-.empty-sub { color: var(--text3); font-size: .88rem; max-width: 320px; line-height: 1.6; }
+.fc-title-h{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--text);flex:1}
+.fc-nav-tabs{display:flex;background:var(--bg3);border-radius:100px;padding:3px;gap:2px}
+.fc-nav-tab{padding:6px 16px;border-radius:100px;font-size:.8rem;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--text3);transition:var(--tr)}
+.fc-nav-tab.active{background:var(--bg);color:var(--text);box-shadow:var(--sh-sm)}
 
-/* Book grid */
-.book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 28px; }
+/* FOLDER panel */
+#folder-panel{flex:1;overflow-y:auto}
+.folder-list{padding:20px 24px;display:flex;flex-direction:column;gap:10px}
+.folder-item{
+  display:flex;align-items:center;gap:14px;padding:14px 18px;
+  background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r-md);
+  cursor:pointer;transition:var(--tr);
+}
+.folder-item:hover{border-color:var(--accent-lt);background:var(--bg);box-shadow:var(--sh-sm)}
+.folder-item.active-folder{border-color:var(--accent);background:var(--accent-lt)}
+.folder-icon{font-size:1.4rem;flex-shrink:0}
+.folder-info{flex:1}
+.folder-name{font-family:'Lora',serif;font-weight:600;font-size:.92rem;color:var(--text);line-height:1.3}
+.folder-count{font-size:.74rem;color:var(--text3);margin-top:2px}
+.folder-arrow{color:var(--text3);font-size:.9rem}
 
-.book-card { cursor: pointer; transition: var(--tr); position: relative; }
-.book-card:hover { transform: translateY(-5px); }
-.book-card:hover .book-cover { box-shadow: var(--sh-lg); }
+/* Vocab list panel */
+#vocab-panel{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.vocab-panel-header{display:flex;align-items:center;gap:10px;padding:14px 24px;border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap}
+.vocab-panel-title{font-family:'Lora',serif;font-size:1rem;font-weight:600;color:var(--text);flex:1}
+.vocab-list-scroll{flex:1;overflow-y:auto;padding:12px 24px}
+.vocab-item{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r-sm);transition:var(--tr);margin-bottom:8px}
+.vocab-item:hover{border-color:var(--accent-lt);background:var(--bg)}
+.vocab-en{font-family:'Lora',serif;font-weight:600;font-size:.9rem;color:var(--text);min-width:110px;line-height:1.4}
+.vocab-sep{width:1px;background:var(--border);align-self:stretch;flex-shrink:0}
+.vocab-right{flex:1;display:flex;flex-direction:column;gap:3px}
+.vocab-id{color:var(--text2);font-size:.84rem}
+.vocab-def{color:var(--text3);font-size:.76rem;font-style:italic;line-height:1.4}
+.vocab-syn{font-size:.72rem;color:var(--green);margin-top:2px}
+.vocab-actions{display:flex;gap:4px;align-items:center;flex-shrink:0}
+.vocab-edit-btn,.vocab-del-btn{background:none;border:none;cursor:pointer;font-size:.85rem;padding:4px 6px;border-radius:6px;transition:var(--tr)}
+.vocab-edit-btn{color:var(--text3)}.vocab-edit-btn:hover{color:var(--accent);background:var(--accent-lt)}
+.vocab-del-btn{color:var(--text3)}.vocab-del-btn:hover{color:var(--accent);background:var(--accent-lt)}
+.vocab-edit-form{background:var(--bg3);border-radius:var(--r-sm);padding:10px;margin-top:6px;display:flex;flex-direction:column;gap:6px}
+.vocab-edit-field{border:1.5px solid var(--border);border-radius:var(--r-sm);padding:6px 10px;font-size:.82rem;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);outline:none}
+.vocab-edit-field:focus{border-color:var(--accent)}
+.vocab-edit-actions{display:flex;gap:6px}
 
-.book-cover {
-  width: 100%; aspect-ratio: 2/3;
-  border-radius: 5px 14px 14px 5px;
-  overflow: hidden; background: var(--bg3);
-  box-shadow: var(--sh-card), -4px 4px 0 rgba(44,36,22,.12);
-  position: relative; transition: box-shadow .25s ease;
-}
-.book-cover img { width: 100%; height: 100%; object-fit: cover; }
-.book-cover-ph {
-  width: 100%; height: 100%;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 10px; padding: 18px;
-}
-.cc0{background:linear-gradient(145deg,#c0392b,#922b21)}
-.cc1{background:linear-gradient(145deg,#2471a3,#1a5276)}
-.cc2{background:linear-gradient(145deg,#1e8449,#145a32)}
-.cc3{background:linear-gradient(145deg,#7d3c98,#6c3483)}
-.cc4{background:linear-gradient(145deg,#b7950b,#9a7d0a)}
-.cc5{background:linear-gradient(145deg,#784212,#6e2f1a)}
-.cover-t { font-family: 'Lora', serif; font-size: .72rem; text-align: center; color: rgba(255,255,255,.9); line-height: 1.35; }
-.book-spine { position: absolute; left: 0; top: 0; bottom: 0; width: 7px; background: rgba(0,0,0,.18); border-radius: 5px 0 0 5px; }
+/* ═══ QUIZ VIEW ═══ */
+#quiz-view{background:var(--bg);flex:1;display:flex;flex-direction:column}
+.quiz-header{display:flex;align-items:center;gap:12px;padding:16px 24px;border-bottom:1px solid var(--border);flex-shrink:0}
+.quiz-title{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--text);flex:1}
+.quiz-body{flex:1;overflow-y:auto;padding:24px}
 
-.book-del {
-  position: absolute; top: 8px; right: 8px;
-  width: 30px; height: 30px; border-radius: 50%;
-  background: rgba(192,57,43,.92); color: #fff; border: none;
-  font-size: .8rem; cursor: pointer; display: none;
-  align-items: center; justify-content: center; transition: var(--tr);
-}
-.book-card:hover .book-del { display: flex; }
-.book-del:hover { background: var(--accent-dk); transform: scale(1.1); }
+/* Quiz setup */
+.quiz-setup{max-width:500px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+.quiz-setup-title{font-family:'Lora',serif;font-size:1.1rem;color:var(--text);margin-bottom:4px}
+.quiz-folder-opts{display:flex;flex-direction:column;gap:8px}
+.quiz-folder-opt{display:flex;align-items:center;gap:10px;padding:12px 16px;border:1.5px solid var(--border);border-radius:var(--r-md);cursor:pointer;transition:var(--tr);background:var(--bg2)}
+.quiz-folder-opt:hover{border-color:var(--accent-lt)}
+.quiz-folder-opt input[type=radio]{accent-color:var(--accent);flex-shrink:0}
+.quiz-folder-opt-name{font-weight:500;color:var(--text);font-size:.88rem}
+.quiz-folder-opt-cnt{font-size:.74rem;color:var(--text3);margin-top:1px}
 
-.book-meta { margin-top: 10px; padding: 0 2px; }
-.book-ttl {
-  font-family: 'Lora', serif; font-size: .82rem; font-weight: 600;
-  color: var(--text); line-height: 1.35;
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-}
-.book-auth { font-size: .72rem; color: var(--text3); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Quiz active */
+.quiz-progress-bar{height:4px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-bottom:20px}
+.quiz-progress-fill{height:100%;background:var(--accent);border-radius:4px;transition:width .4s}
+.quiz-question-card{background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:24px;margin-bottom:20px}
+.quiz-type-badge{font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);background:var(--accent-lt);padding:2px 8px;border-radius:100px;margin-bottom:12px;display:inline-block}
+.quiz-question-text{font-family:'Lora',serif;font-size:1.05rem;color:var(--text);line-height:1.5;margin-bottom:4px}
+.quiz-sentence{font-size:.82rem;color:var(--text3);font-style:italic;line-height:1.5;margin-bottom:16px}
+.quiz-options{display:flex;flex-direction:column;gap:8px}
+.quiz-option{padding:11px 16px;border:1.5px solid var(--border);border-radius:var(--r-md);cursor:pointer;font-size:.88rem;color:var(--text2);transition:var(--tr);background:var(--bg);text-align:left}
+.quiz-option:hover:not(:disabled){border-color:var(--accent-lt);background:var(--accent-lt);color:var(--text)}
+.quiz-option.correct{border-color:var(--green);background:var(--green-lt);color:var(--green);font-weight:600}
+.quiz-option.wrong{border-color:var(--accent);background:var(--accent-lt);color:var(--accent)}
+.quiz-option:disabled{cursor:default}
+.quiz-fill-input{width:100%;border:1.5px solid var(--border);border-radius:var(--r-sm);padding:10px 14px;font-size:.92rem;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);outline:none;margin-bottom:10px}
+.quiz-fill-input:focus{border-color:var(--accent)}
+.quiz-fill-input.correct{border-color:var(--green);background:var(--green-lt)}
+.quiz-fill-input.wrong{border-color:var(--accent);background:var(--accent-lt)}
+.quiz-score-card{text-align:center;padding:40px;background:var(--bg2);border-radius:var(--r-xl);border:1.5px solid var(--border)}
+.quiz-score-emoji{font-size:4rem;margin-bottom:12px}
+.quiz-score-num{font-family:'Playfair Display',serif;font-size:3rem;color:var(--accent);line-height:1}
+.quiz-score-lbl{font-size:1rem;color:var(--text2);margin-top:6px}
+.quiz-score-detail{font-size:.85rem;color:var(--text3);margin-top:8px}
 
-/* ═══════════════════════════════════════
-   READER
-═══════════════════════════════════════ */
-#reader-view { background: var(--bg2); flex-direction: column; }
+/* ═══ LOADING & TOAST ═══ */
+#loading{position:fixed;inset:0;background:var(--bg);opacity:0;pointer-events:none;display:flex;align-items:center;justify-content:center;z-index:9998;flex-direction:column;gap:16px;transition:opacity .25s}
+#loading.show{opacity:1;pointer-events:all}
+.ld-ring{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .85s linear infinite}
+.ld-txt{font-family:'Lora',serif;color:var(--text2);font-size:1rem}
+#toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--text);color:var(--bg);padding:9px 22px;border-radius:100px;font-size:.82rem;font-weight:500;z-index:9999;opacity:0;transition:all .28s;pointer-events:none;white-space:nowrap}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#epub-upload{display:none}
 
-.rdr-toolbar {
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px 16px;
-  background: var(--bg); border-bottom: 1px solid var(--border);
-  z-index: 20; flex-shrink: 0; min-height: 54px;
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:640px){
+  .lib-header{padding:20px 18px 14px}
+  .lib-body{padding:20px 18px 48px}
+  .book-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:18px}
+  .brand-name{font-size:1.5rem}
+  #toc-sidebar{width:280px}
+  .settings-sheet{max-height:90vh}
+  #dict-popup{width:calc(100vw - 24px);left:12px!important}
+  .fc-header-bar{padding:12px 16px}
+  .folder-list,.vocab-list-scroll,.quiz-body{padding:12px 14px}
 }
-.rdr-title {
-  flex: 1; font-family: 'Lora', serif; font-size: .9rem; font-weight: 600;
-  color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  text-align: center; padding: 0 8px;
-}
-.rdr-controls { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-
-/* TOC Sidebar */
-#toc-sidebar {
-  position: fixed; left: 0; top: 0; bottom: 0; width: 300px;
-  background: var(--bg); border-right: 1px solid var(--border);
-  z-index: 100; transform: translateX(-100%);
-  transition: transform .3s cubic-bezier(.4,0,.2,1);
-  display: flex; flex-direction: column;
-  box-shadow: var(--sh-lg);
-}
-#toc-sidebar.open { transform: translateX(0); }
-.toc-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 20px 20px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0;
-}
-.toc-header h3 { font-family: 'Lora', serif; font-size: 1rem; color: var(--text); }
-.toc-list { flex: 1; overflow-y: auto; padding: 10px 0; }
-.toc-list::-webkit-scrollbar { width: 4px; }
-.toc-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-.toc-item {
-  display: block; padding: 10px 20px; font-size: .85rem; color: var(--text2);
-  cursor: pointer; transition: var(--tr); border: none; background: none;
-  text-align: left; width: 100%; line-height: 1.4;
-}
-.toc-item:hover { background: var(--bg2); color: var(--text); }
-.toc-item.toc-l2 { padding-left: 36px; font-size: .8rem; color: var(--text3); }
-.toc-item.toc-l3 { padding-left: 52px; font-size: .78rem; color: var(--text3); }
-.toc-overlay {
-  position: fixed; inset: 0; background: var(--overlay);
-  z-index: 99; display: none; backdrop-filter: blur(4px);
-}
-.toc-overlay.open { display: block; }
-
-/* Reader area */
-.rdr-container {
-  flex: 1; position: relative; overflow: hidden;
-  display: flex; align-items: stretch; min-height: 0;
-}
-.rdr-nav {
-  position: absolute; top: 50%; transform: translateY(-50%);
-  width: 48px; height: 90px;
-  background: rgba(253,252,248,.88); border: 1.5px solid var(--border);
-  color: var(--text2); font-size: 1.2rem;
-  cursor: pointer; z-index: 10;
-  display: flex; align-items: center; justify-content: center;
-  transition: var(--tr); backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-[data-theme="dark"] .rdr-nav { background: rgba(22,22,22,.88); }
-#prev-btn { left: 0; border-radius: 0 10px 10px 0; border-left: none; }
-#next-btn { right: 0; border-radius: 10px 0 0 10px; border-right: none; }
-.rdr-nav:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
-
-#epub-viewer { flex: 1; overflow: hidden; position: relative; }
-#epub-viewer iframe { border: none; width: 100% !important; height: 100% !important; display: block; }
-
-.rdr-footer {
-  display: flex; align-items: center; justify-content: center;
-  gap: 14px; padding: 8px 24px;
-  background: var(--bg); border-top: 1px solid var(--border); flex-shrink: 0;
-}
-.prog-track {
-  flex: 1; max-width: 420px; height: 3px;
-  background: var(--bg3); border-radius: 3px; overflow: hidden; cursor: pointer;
-}
-.prog-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width .4s ease; width: 0%; }
-.pg-info { font-size: .72rem; color: var(--text3); font-weight: 500; min-width: 36px; text-align: right; }
-
-/* ═══════════════════════════════════════
-   SETTINGS PANEL (MODAL)
-═══════════════════════════════════════ */
-#settings-modal {
-  position: fixed; inset: 0; z-index: 200;
-  display: none; align-items: flex-end; justify-content: center;
-  padding: 0;
-}
-#settings-modal.open { display: flex; }
-
-.settings-backdrop {
-  position: absolute; inset: 0;
-  background: var(--overlay); backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-}
-.settings-sheet {
-  position: relative; z-index: 1;
-  background: var(--bg); border-radius: var(--r-xl) var(--r-xl) 0 0;
-  width: 100%; max-width: 600px;
-  padding: 0 0 32px;
-  box-shadow: 0 -8px 40px rgba(0,0,0,.2);
-  animation: slideUp .3s cubic-bezier(.34,1.2,.64,1);
-  max-height: 85vh; overflow-y: auto;
-}
-@keyframes slideUp {
-  from { transform: translateY(100%); opacity: 0; }
-  to   { transform: translateY(0); opacity: 1; }
-}
-.settings-handle {
-  width: 40px; height: 4px; background: var(--border);
-  border-radius: 2px; margin: 14px auto 0;
-}
-.settings-title {
-  font-family: 'Playfair Display', serif; font-size: 1.2rem;
-  color: var(--text); padding: 16px 24px 0; margin-bottom: 4px;
-}
-.settings-section { padding: 16px 24px 0; }
-.settings-section-lbl {
-  font-size: .68rem; font-weight: 700; letter-spacing: .12em;
-  text-transform: uppercase; color: var(--text3); margin-bottom: 12px;
-}
-
-/* Theme pills */
-.theme-pills { display: flex; gap: 10px; }
-.theme-pill {
-  flex: 1; padding: 10px 8px; border-radius: var(--r-md);
-  border: 2px solid var(--border); cursor: pointer;
-  display: flex; flex-direction: column; align-items: center; gap: 6px;
-  transition: var(--tr); background: var(--bg2);
-}
-.theme-pill:hover { border-color: var(--accent); }
-.theme-pill.active { border-color: var(--accent); background: var(--accent-lt); }
-[data-theme="dark"] .theme-pill.active { background: var(--accent-lt); }
-.theme-swatch {
-  width: 36px; height: 24px; border-radius: 6px;
-  border: 1px solid rgba(0,0,0,.1);
-}
-.ts-light  { background: #ffffff; }
-.ts-sepia  { background: #fdf6e3; }
-.ts-dark   { background: #1a1a1a; }
-.theme-pill span { font-size: .75rem; color: var(--text2); font-weight: 500; }
-
-/* Font family */
-.font-btns { display: flex; gap: 8px; flex-wrap: wrap; }
-.font-btn {
-  padding: 8px 16px; border-radius: 100px;
-  border: 1.5px solid var(--border); background: var(--bg2);
-  cursor: pointer; transition: var(--tr); font-size: .82rem; color: var(--text2);
-}
-.font-btn:hover { border-color: var(--accent); }
-.font-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
-.ff-lora  { font-family: 'Lora', serif; }
-.ff-inter { font-family: 'Inter', sans-serif; }
-.ff-dyslexic { font-family: 'Comic Sans MS', cursive; letter-spacing: .02em; }
-
-/* Font size control */
-.fz-control { display: flex; align-items: center; gap: 14px; }
-.fz-val {
-  font-family: 'Lora', serif; font-size: 1.3rem; font-weight: 600;
-  color: var(--text); min-width: 54px; text-align: center;
-}
-.fz-slider {
-  flex: 1; -webkit-appearance: none; appearance: none;
-  height: 4px; background: var(--bg3); border-radius: 4px; outline: none;
-}
-.fz-slider::-webkit-slider-thumb {
-  -webkit-appearance: none; width: 20px; height: 20px;
-  border-radius: 50%; background: var(--accent);
-  cursor: pointer; box-shadow: 0 2px 8px rgba(192,57,43,.3);
-}
-.fz-slider::-moz-range-thumb {
-  width: 20px; height: 20px; border-radius: 50%;
-  background: var(--accent); cursor: pointer; border: none;
-}
-.fz-step-btn {
-  width: 36px; height: 36px; border-radius: 50%;
-  border: 1.5px solid var(--border); background: var(--bg2);
-  cursor: pointer; font-size: 1.1rem; color: var(--text2);
-  display: flex; align-items: center; justify-content: center; transition: var(--tr); flex-shrink: 0;
-}
-.fz-step-btn:hover { background: var(--text); color: var(--bg); border-color: var(--text); }
-
-/* Line spacing */
-.ls-btns { display: flex; gap: 8px; }
-.ls-btn {
-  flex: 1; padding: 9px 0; border-radius: var(--r-sm);
-  border: 1.5px solid var(--border); background: var(--bg2);
-  cursor: pointer; font-size: .82rem; color: var(--text2);
-  transition: var(--tr); text-align: center;
-}
-.ls-btn:hover { border-color: var(--accent); }
-.ls-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
-
-/* Margin */
-.margin-btns { display: flex; gap: 8px; }
-.mg-btn {
-  flex: 1; padding: 9px 0; border-radius: var(--r-sm);
-  border: 1.5px solid var(--border); background: var(--bg2);
-  cursor: pointer; font-size: .82rem; color: var(--text2);
-  transition: var(--tr); text-align: center;
-}
-.mg-btn:hover { border-color: var(--accent); }
-.mg-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
-
-.settings-divider { height: 1px; background: var(--border); margin: 16px 24px 0; }
-
-/* ═══════════════════════════════════════
-   DICT POPUP
-═══════════════════════════════════════ */
-#dict-popup {
-  position: fixed; z-index: 300;
-  background: var(--bg); border: 1.5px solid var(--border);
-  border-radius: var(--r-md); box-shadow: var(--sh-lg);
-  padding: 14px 18px; min-width: 240px; max-width: 320px;
-  display: none;
-  animation: popIn .2s cubic-bezier(.34,1.56,.64,1);
-}
-@keyframes popIn {
-  from { opacity: 0; transform: scale(.9) translateY(6px); }
-  to   { opacity: 1; transform: scale(1) translateY(0); }
-}
-.popup-word {
-  font-family: 'Lora', serif; font-size: 1.1rem; font-weight: 600;
-  color: var(--text); margin-bottom: 6px; padding-right: 26px;
-}
-.popup-load { color: var(--text3); font-size: .84rem; display: flex; align-items: center; gap: 8px; }
-.spinner {
-  width: 14px; height: 14px; border: 2px solid var(--border);
-  border-top-color: var(--accent); border-radius: 50%;
-  animation: spin .7s linear infinite; flex-shrink: 0;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-.popup-trans { color: var(--text2); font-size: .88rem; margin-bottom: 12px; line-height: 1.55; }
-.popup-actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
-.popup-close {
-  width: 26px; height: 26px; border-radius: 50%;
-  background: var(--bg2); border: 1px solid var(--border);
-  color: var(--text3); font-size: .8rem; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  position: absolute; top: 9px; right: 9px; transition: var(--tr);
-}
-.popup-close:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
-
-/* ═══════════════════════════════════════
-   FLASHCARD VIEW
-═══════════════════════════════════════ */
-#fc-view { background: var(--bg); }
-.fc-wrap { max-width: 700px; width: 100%; margin: 0 auto; padding: 40px; display: flex; flex-direction: column; flex: 1; }
-.fc-header { display: flex; align-items: center; gap: 12px; margin-bottom: 32px; flex-wrap: wrap; }
-.fc-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--text); }
-.fc-cnt { background: var(--accent); color: #fff; border-radius: 100px; padding: 2px 10px; font-size: .76rem; font-weight: 600; }
-.tab-nav { display: flex; background: var(--bg2); border: 1.5px solid var(--border); border-radius: 100px; padding: 3px; width: fit-content; margin-left: auto; }
-.tab-btn {
-  padding: 7px 18px; border-radius: 100px; border: none;
-  background: transparent; font-family: 'DM Sans', sans-serif;
-  font-size: .83rem; font-weight: 500; color: var(--text2);
-  cursor: pointer; transition: var(--tr);
-}
-.tab-btn.active { background: var(--text); color: var(--bg); }
-.tab-panel { display: none; }
-.tab-panel.active { display: flex; flex-direction: column; gap: 28px; width: 100%; }
-
-.card-wrap { perspective: 1200px; width: 100%; max-width: 500px; align-self: center; }
-.card-3d {
-  position: relative; width: 100%; height: 240px;
-  transform-style: preserve-3d;
-  transition: transform .5s cubic-bezier(.4,0,.2,1); cursor: pointer;
-}
-.card-3d.flipped { transform: rotateY(180deg); }
-.card-face {
-  position: absolute; inset: 0; border-radius: var(--r-lg);
-  backface-visibility: hidden;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 32px; box-shadow: var(--sh-card);
-}
-.card-front { background: var(--text); color: var(--bg); }
-.card-back  { background: var(--green); color: #fff; transform: rotateY(180deg); }
-.card-lbl   { font-size: .67rem; letter-spacing: .12em; text-transform: uppercase; opacity: .55; margin-bottom: 10px; font-weight: 600; }
-.card-word  { font-family: 'Lora', serif; font-size: 1.9rem; font-weight: 600; text-align: center; line-height: 1.2; }
-.card-hint  { opacity: .4; font-size: .78rem; margin-top: 12px; }
-.card-trans { font-family: 'Lora', serif; font-size: 1.3rem; text-align: center; line-height: 1.45; }
-.fc-ctrls   { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; align-self: center; }
-.fc-counter { font-size: .76rem; color: var(--text3); text-align: center; }
-.fc-empty-box { text-align: center; padding: 60px 20px; color: var(--text3); }
-.fc-empty-box .ei { font-size: 3rem; margin-bottom: 12px; }
-
-.vocab-list-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-.vocab-list { display: flex; flex-direction: column; gap: 7px; max-height: 420px; overflow-y: auto; }
-.vocab-list::-webkit-scrollbar { width: 4px; }
-.vocab-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-.vocab-item {
-  display: flex; align-items: center; gap: 12px;
-  padding: 11px 16px; background: var(--bg2);
-  border: 1.5px solid var(--border); border-radius: var(--r-sm); transition: var(--tr);
-}
-.vocab-item:hover { border-color: var(--accent-lt); background: var(--bg); }
-.vocab-en  { font-family: 'Lora', serif; font-weight: 600; font-size: .9rem; color: var(--text); min-width: 110px; }
-.vocab-sep { width: 1px; height: 20px; background: var(--border); }
-.vocab-id  { color: var(--text2); font-size: .84rem; flex: 1; }
-.vocab-del {
-  background: none; border: none; color: var(--text3);
-  cursor: pointer; font-size: .9rem; padding: 4px;
-  border-radius: 4px; transition: var(--tr);
-}
-.vocab-del:hover { color: var(--accent); }
-
-/* ═══════════════════════════════════════
-   LOADING OVERLAY
-═══════════════════════════════════════ */
-#loading {
-  position: fixed; inset: 0;
-  background: var(--bg); opacity: 0; pointer-events: none;
-  display: flex; align-items: center; justify-content: center;
-  z-index: 9998; flex-direction: column; gap: 16px;
-  transition: opacity .25s ease;
-}
-#loading.show { opacity: 1; pointer-events: all; }
-.ld-ring {
-  width: 48px; height: 48px;
-  border: 3px solid var(--border);
-  border-top-color: var(--accent);
-  border-radius: 50%; animation: spin .85s linear infinite;
-}
-.ld-txt { font-family: 'Lora', serif; color: var(--text2); font-size: 1rem; }
-
-/* ═══════════════════════════════════════
-   TOAST
-═══════════════════════════════════════ */
-#toast {
-  position: fixed; bottom: 32px; left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  background: var(--text); color: var(--bg);
-  padding: 9px 22px; border-radius: 100px;
-  font-size: .82rem; font-weight: 500;
-  z-index: 9999; opacity: 0; transition: all .28s ease;
-  pointer-events: none; white-space: nowrap;
-}
-#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-/* ═══════════════════════════════════════
-   MISC
-═══════════════════════════════════════ */
-#epub-upload { display: none; }
-
-/* Responsive */
-@media (max-width: 640px) {
-  .lib-header { padding: 20px 18px 14px; }
-  .lib-body   { padding: 20px 18px 48px; }
-  .book-grid  { grid-template-columns: repeat(auto-fill, minmax(130px,1fr)); gap: 18px; }
-  .brand-name { font-size: 1.5rem; }
-  .fc-wrap    { padding: 24px 16px; }
-  #toc-sidebar { width: 280px; }
-  .settings-sheet { max-height: 90vh; }
-}
-
-/* Tablet landscape tweak */
-@media (min-width: 768px) and (orientation: landscape) {
-  .book-grid { grid-template-columns: repeat(auto-fill, minmax(145px,1fr)); }
+@media(min-width:768px) and (orientation:landscape){
+  .book-grid{grid-template-columns:repeat(auto-fill,minmax(145px,1fr))}
 }
 </style>
 </head>
 <body data-theme="light">
 
-<!-- ════════════ TOC SIDEBAR ════════════ -->
+<!-- TOC SIDEBAR -->
 <div id="toc-overlay" class="toc-overlay" onclick="closeTOC()"></div>
 <div id="toc-sidebar">
   <div class="toc-header">
     <h3>📑 Daftar Isi</h3>
     <button class="btn btn-ghost btn-icon" onclick="closeTOC()">✕</button>
   </div>
-  <div class="toc-list" id="toc-list">
-    <div style="padding:20px;color:var(--text3);font-size:.85rem;text-align:center">Tidak ada daftar isi.</div>
-  </div>
+  <div class="toc-list" id="toc-list"><div style="padding:20px;color:var(--text3);font-size:.85rem;text-align:center">Tidak ada daftar isi.</div></div>
 </div>
 
-<!-- ════════════ SETTINGS MODAL ════════════ -->
+<!-- SETTINGS MODAL -->
 <div id="settings-modal">
   <div class="settings-backdrop" onclick="closeSettings()"></div>
   <div class="settings-sheet">
     <div class="settings-handle"></div>
     <div class="settings-title">⚙️ Pengaturan Tampilan</div>
-
-    <!-- THEME -->
     <div class="settings-section">
       <div class="settings-section-lbl">Tema Warna</div>
       <div class="theme-pills">
-        <div class="theme-pill active" data-theme-val="light" onclick="setTheme('light')">
-          <div class="theme-swatch ts-light"></div><span>☀️ Light</span>
-        </div>
-        <div class="theme-pill" data-theme-val="sepia" onclick="setTheme('sepia')">
-          <div class="theme-swatch ts-sepia"></div><span>📜 Sepia</span>
-        </div>
-        <div class="theme-pill" data-theme-val="dark" onclick="setTheme('dark')">
-          <div class="theme-swatch ts-dark"></div><span>🌙 Dark</span>
-        </div>
+        <div class="theme-pill active" data-theme-val="light" onclick="setTheme('light')"><div class="theme-swatch ts-light"></div><span>☀️ Light</span></div>
+        <div class="theme-pill" data-theme-val="sepia" onclick="setTheme('sepia')"><div class="theme-swatch ts-sepia"></div><span>📜 Sepia</span></div>
+        <div class="theme-pill" data-theme-val="dark" onclick="setTheme('dark')"><div class="theme-swatch ts-dark"></div><span>🌙 Dark</span></div>
       </div>
     </div>
-
     <div class="settings-divider"></div>
-
-    <!-- FONT FAMILY -->
     <div class="settings-section">
       <div class="settings-section-lbl">Jenis Font</div>
       <div class="font-btns">
-        <button class="font-btn ff-lora active"     data-ff="lora"     onclick="setFF('lora')">Lora (Serif)</button>
-        <button class="font-btn ff-inter"           data-ff="inter"    onclick="setFF('inter')">Inter (Sans)</button>
-        <button class="font-btn ff-dyslexic"        data-ff="dyslexic" onclick="setFF('dyslexic')">OpenDyslexic</button>
+        <button class="font-btn ff-lora active" data-ff="lora" onclick="setFF('lora')">Lora (Serif)</button>
+        <button class="font-btn ff-inter" data-ff="inter" onclick="setFF('inter')">Inter (Sans)</button>
+        <button class="font-btn ff-dyslexic" data-ff="dyslexic" onclick="setFF('dyslexic')">OpenDyslexic</button>
       </div>
     </div>
-
     <div class="settings-divider"></div>
-
-    <!-- FONT SIZE -->
     <div class="settings-section">
       <div class="settings-section-lbl">Ukuran Font</div>
       <div class="fz-control">
@@ -633,22 +350,16 @@ body {
         <button class="fz-step-btn" onclick="stepFZ(1)">＋</button>
       </div>
     </div>
-
     <div class="settings-divider"></div>
-
-    <!-- LINE SPACING -->
     <div class="settings-section">
       <div class="settings-section-lbl">Jarak Baris</div>
       <div class="ls-btns">
-        <button class="ls-btn" data-ls="1.2" onclick="setLS('1.2')">Rapat (1.2)</button>
-        <button class="ls-btn active" data-ls="1.8" onclick="setLS('1.8')">Normal (1.8)</button>
-        <button class="ls-btn" data-ls="2.2" onclick="setLS('2.2')">Lebar (2.2)</button>
+        <button class="ls-btn" data-ls="1.2" onclick="setLS('1.2')">Rapat</button>
+        <button class="ls-btn active" data-ls="1.8" onclick="setLS('1.8')">Normal</button>
+        <button class="ls-btn" data-ls="2.2" onclick="setLS('2.2')">Lebar</button>
       </div>
     </div>
-
     <div class="settings-divider"></div>
-
-    <!-- MARGIN -->
     <div class="settings-section">
       <div class="settings-section-lbl">Margin Teks</div>
       <div class="margin-btns">
@@ -657,23 +368,23 @@ body {
         <button class="mg-btn" data-mg="72" onclick="setMG('72')">Lebar</button>
       </div>
     </div>
-
     <div style="height:16px"></div>
   </div>
 </div>
 
-<!-- ════════════ LIBRARY ════════════ -->
+<!-- ════════ LIBRARY ════════ -->
 <div id="lib-view" class="view active">
   <div class="lib-header">
     <div class="brand">
       <div class="brand-name">Lexi<span>Read</span><sup>Pro</sup></div>
-      <div class="brand-sub">EPUB Reader & Vocabulary Trainer</div>
+      <div class="brand-sub">EPUB Reader & Vocabulary Trainer v2</div>
     </div>
     <div class="header-actions">
-      <button class="btn btn-ghost" onclick="goFC()">
+      <button class="btn btn-ghost" onclick="showView('fc-view');renderFolders()">
         🗂 Flashcard
         <span id="fc-badge" style="background:var(--accent);color:#fff;border-radius:100px;padding:1px 8px;font-size:.72rem;display:none;margin-left:2px"></span>
       </button>
+      <button class="btn btn-ghost" onclick="showView('quiz-view');renderQuizSetup()">🎯 Quiz</button>
       <button class="btn btn-accent" onclick="document.getElementById('epub-upload').click()">＋ Tambah Buku</button>
       <input type="file" id="epub-upload" accept=".epub" multiple>
     </div>
@@ -690,24 +401,22 @@ body {
   </div>
 </div>
 
-<!-- ════════════ READER ════════════ -->
+<!-- ════════ READER ════════ -->
 <div id="reader-view" class="view">
   <div class="rdr-toolbar">
-    <button class="btn btn-ghost btn-icon" onclick="exitReader()" title="Kembali">←</button>
-    <button class="btn btn-ghost btn-icon" onclick="openTOC()" title="Daftar Isi">☰</button>
+    <button class="btn btn-ghost btn-icon" onclick="exitReader()">←</button>
+    <button class="btn btn-ghost btn-icon" onclick="openTOC()">☰</button>
     <div class="rdr-title" id="rdr-title">Memuat…</div>
     <div class="rdr-controls">
-      <button class="btn btn-ghost btn-icon" onclick="openSettings()" title="Pengaturan">⚙️</button>
-      <button class="btn btn-ghost btn-icon" onclick="goFC()" title="Flashcard">🗂</button>
+      <button class="btn btn-ghost btn-icon" onclick="openSettings()">⚙️</button>
+      <button class="btn btn-ghost btn-icon" onclick="showView('fc-view');renderFolders()">🗂</button>
     </div>
   </div>
-
   <div class="rdr-container">
     <button id="prev-btn" class="rdr-nav" onclick="prevPage()">‹</button>
     <div id="epub-viewer"></div>
     <button id="next-btn" class="rdr-nav" onclick="nextPage()">›</button>
   </div>
-
   <div class="rdr-footer">
     <div class="pg-info" id="pg-info">0%</div>
     <div class="prog-track" id="prog-track" onclick="seekProgress(event)">
@@ -716,746 +425,1014 @@ body {
   </div>
 </div>
 
-<!-- ════════════ FLASHCARD ════════════ -->
+<!-- ════════ FLASHCARD VIEW ════════ -->
 <div id="fc-view" class="view">
-  <div class="fc-wrap">
-    <div class="fc-header">
-      <button class="btn btn-ghost btn-icon" id="fc-back-btn">←</button>
-      <div class="fc-title">Flashcard</div>
-      <span class="fc-cnt" id="fc-total">0 kata</span>
-      <div class="tab-nav">
-        <button class="tab-btn active" onclick="switchTab('quiz')">Mode Kuis</button>
-        <button class="tab-btn" onclick="switchTab('list')">Daftar Kata</button>
-      </div>
+  <div class="fc-header-bar">
+    <button class="btn btn-ghost btn-icon" onclick="showView('lib-view')">←</button>
+    <div class="fc-title-h">🗂 Flashcard</div>
+    <span id="fc-total-lbl" style="font-size:.8rem;color:var(--text3)">0 kata</span>
+    <div class="fc-nav-tabs">
+      <button class="fc-nav-tab active" onclick="switchFcTab('folders')">Folder</button>
+      <button class="fc-nav-tab" onclick="switchFcTab('vocab')">Semua Kata</button>
     </div>
-
-    <div id="tab-quiz" class="tab-panel active">
-      <div id="fc-empty" class="fc-empty-box">
-        <div class="ei">💡</div>
-        <p style="font-family:'Lora',serif;font-size:1rem;color:var(--text2);margin-bottom:6px">Belum ada kosakata</p>
-        <p style="font-size:.84rem">Pilih kata saat membaca, klik "Simpan ke Flashcard".</p>
-      </div>
-      <div id="fc-quiz" style="display:none;flex-direction:column;align-items:center;gap:22px;width:100%">
-        <div class="card-wrap">
-          <div class="card-3d" id="card3d" onclick="flipCard()">
-            <div class="card-face card-front">
-              <div class="card-lbl">Bahasa Inggris</div>
-              <div class="card-word" id="fc-word">—</div>
-              <div class="card-hint">Ketuk kartu untuk lihat arti</div>
-            </div>
-            <div class="card-face card-back">
-              <div class="card-lbl">Bahasa Indonesia</div>
-              <div class="card-trans" id="fc-trans">—</div>
-            </div>
-          </div>
-        </div>
-        <div class="fc-ctrls">
-          <button class="btn btn-ghost" onclick="prevCard()">← Sebelumnya</button>
-          <button class="btn btn-primary" onclick="nextCard()">Berikutnya →</button>
-        </div>
-        <div class="fc-counter" id="fc-counter">1 / 1</div>
-      </div>
+    <button class="btn btn-ghost btn-icon" onclick="showView('quiz-view');renderQuizSetup()" title="Mulai Quiz">🎯</button>
+  </div>
+  <!-- Folder panel -->
+  <div id="folder-panel" style="flex:1;overflow-y:auto">
+    <div class="folder-list" id="folder-list"></div>
+  </div>
+  <!-- Vocab panel (hidden initially) -->
+  <div id="vocab-panel" style="display:none">
+    <div class="vocab-panel-header">
+      <button class="btn btn-ghost btn-icon" style="width:34px;height:34px;font-size:.85rem" id="vocab-back-btn" onclick="showFolderPanel()">←</button>
+      <div class="vocab-panel-title" id="vocab-panel-title">Semua Kosakata</div>
+      <button class="btn btn-ghost" style="font-size:.74rem;padding:5px 12px;color:var(--accent)" onclick="clearCurrentFolder()">Hapus Semua</button>
     </div>
-
-    <div id="tab-list" class="tab-panel">
-      <div class="vocab-list-hdr">
-        <div class="section-lbl" style="margin:0">Semua Kosakata</div>
-        <button class="btn btn-ghost" style="font-size:.76rem;padding:6px 14px;color:var(--accent);border-color:var(--accent-lt)" onclick="clearAll()">Hapus Semua</button>
-      </div>
-      <div class="vocab-list" id="vocab-list"></div>
-      <div id="vocab-empty" class="fc-empty-box" style="display:none">
-        <div class="ei">📝</div><p>Belum ada kata tersimpan.</p>
-      </div>
-    </div>
+    <div class="vocab-list-scroll" id="vocab-list-scroll"></div>
   </div>
 </div>
 
-<!-- Dict Popup -->
-<div id="dict-popup">
-  <button class="popup-close" onclick="closePopup()">✕</button>
-  <div class="popup-word" id="popup-word"></div>
-  <div id="popup-body"><div class="popup-load"><div class="spinner"></div> Menerjemahkan…</div></div>
+<!-- ════════ QUIZ VIEW ════════ -->
+<div id="quiz-view" class="view">
+  <div class="quiz-header">
+    <button class="btn btn-ghost btn-icon" onclick="showView('lib-view')">←</button>
+    <div class="quiz-title">🎯 Mode Kuis</div>
+    <span id="quiz-status-lbl" style="font-size:.78rem;color:var(--text3)"></span>
+  </div>
+  <div class="quiz-body" id="quiz-body">
+    <!-- dynamic -->
+  </div>
 </div>
 
-<!-- Loading -->
-<div id="loading"><div class="ld-ring"></div><div class="ld-txt" id="ld-txt">Memuat…</div></div>
+<!-- Dict Popup (Enhanced) -->
+<div id="dict-popup">
+  <div class="popup-header">
+    <span class="popup-lang-en">EN</span>
+    <div class="popup-word-main" id="popup-word"></div>
+    <button class="popup-close" onclick="closePopup()">✕</button>
+  </div>
+  <div id="popup-body-inner">
+    <div class="popup-load"><div class="spinner"></div> Menerjemahkan…</div>
+  </div>
+</div>
 
-<!-- Toast -->
+<div id="loading"><div class="ld-ring"></div><div class="ld-txt" id="ld-txt">Memuat…</div></div>
 <div id="toast"></div>
 
-<!-- ════════════════════════════════════════
-     JAVASCRIPT
-═══════════════════════════════════════════ -->
 <script>
-// ──────────────────────────────────────────
-//  IndexedDB
-// ──────────────────────────────────────────
-const DB_NAME = 'LexiReadProDB', DB_VER = 1;
-let db = null;
+/* ══════════════════════════════════════════════
+   IndexedDB — stores: books, vocabulary, meta
+══════════════════════════════════════════════ */
+const DB_NAME='LexiReadProDB', DB_VER=2;
+let db=null;
 
-function openDB() {
-  return new Promise((res, rej) => {
-    const req = indexedDB.open(DB_NAME, DB_VER);
-    req.onupgradeneeded = e => {
-      const d = e.target.result;
-      if (!d.objectStoreNames.contains('books')) d.createObjectStore('books', { keyPath: 'id' });
-      if (!d.objectStoreNames.contains('meta'))  d.createObjectStore('meta',  { keyPath: 'key' });
+function openDB(){
+  return new Promise((res,rej)=>{
+    const req=indexedDB.open(DB_NAME,DB_VER);
+    req.onupgradeneeded=e=>{
+      const d=e.target.result;
+      if(!d.objectStoreNames.contains('books'))      d.createObjectStore('books',{keyPath:'id'});
+      if(!d.objectStoreNames.contains('meta'))       d.createObjectStore('meta',{keyPath:'key'});
+      if(!d.objectStoreNames.contains('vocabulary')){
+        const vs=d.createObjectStore('vocabulary',{keyPath:'id',autoIncrement:true});
+        vs.createIndex('bookId','bookId',{unique:false});
+        vs.createIndex('en','en',{unique:false});
+      }
     };
-    req.onsuccess = e => { db = e.target.result; res(db); };
-    req.onerror   = e => rej(e.target.error);
+    req.onsuccess=e=>{db=e.target.result;res(db)};
+    req.onerror=e=>rej(e.target.error);
   });
 }
-const dbPut = (store, val) => new Promise((res,rej) => {
-  const tx = db.transaction(store,'readwrite');
-  tx.objectStore(store).put(val).onsuccess = () => res();
-  tx.onerror = e => rej(e.target.error);
+const dbPut=(store,val)=>new Promise((res,rej)=>{
+  const tx=db.transaction(store,'readwrite');
+  const r=tx.objectStore(store).put(val);
+  r.onsuccess=()=>res(r.result); tx.onerror=e=>rej(e.target.error);
 });
-const dbGet = (store, key) => new Promise((res,rej) => {
-  const tx = db.transaction(store,'readonly');
-  const r  = tx.objectStore(store).get(key);
-  r.onsuccess = e => res(e.target.result);
-  r.onerror   = e => rej(e.target.error);
+const dbGet=(store,key)=>new Promise((res,rej)=>{
+  const tx=db.transaction(store,'readonly');
+  const r=tx.objectStore(store).get(key);
+  r.onsuccess=e=>res(e.target.result); r.onerror=e=>rej(e.target.error);
 });
-const dbDel = (store, key) => new Promise((res,rej) => {
-  const tx = db.transaction(store,'readwrite');
-  tx.objectStore(store).delete(key).onsuccess = () => res();
-  tx.onerror = e => rej(e.target.error);
+const dbDel=(store,key)=>new Promise((res,rej)=>{
+  const tx=db.transaction(store,'readwrite');
+  tx.objectStore(store).delete(key).onsuccess=()=>res(); tx.onerror=e=>rej(e.target.error);
+});
+const dbGetAll=(store)=>new Promise((res,rej)=>{
+  const tx=db.transaction(store,'readonly');
+  const r=tx.objectStore(store).getAll();
+  r.onsuccess=e=>res(e.target.result); r.onerror=e=>rej(e.target.error);
+});
+const dbGetByIndex=(store,idx,val)=>new Promise((res,rej)=>{
+  const tx=db.transaction(store,'readonly');
+  const r=tx.objectStore(store).index(idx).getAll(val);
+  r.onsuccess=e=>res(e.target.result); r.onerror=e=>rej(e.target.error);
 });
 
-async function saveBooksIndex() {
-  await dbPut('meta', {
-    key: 'books_index',
-    value: books.map(b => ({ id:b.id, title:b.title, author:b.author, cover:b.cover, addedAt:b.addedAt }))
-  });
+/* Vocab IDB helpers */
+async function addVocabEntry(entry){
+  return dbPut('vocabulary',entry);
 }
-async function loadBooksIndex() {
-  const row = await dbGet('meta','books_index');
-  return row ? row.value : [];
+async function updateVocabEntry(entry){
+  await dbPut('vocabulary',entry);
+}
+async function deleteVocabEntry(id){
+  await dbDel('vocabulary',id);
+}
+async function getVocabByBook(bookId){
+  return dbGetByIndex('vocabulary','bookId',bookId);
+}
+async function getAllVocab(){
+  return dbGetAll('vocabulary');
+}
+async function deleteVocabByBook(bookId){
+  const entries=await getVocabByBook(bookId);
+  for(const e of entries) await dbDel('vocabulary',e.id);
+}
+async function vocabExists(en,bookId){
+  const all=await getVocabByBook(bookId);
+  return all.some(v=>v.en.toLowerCase()===en.toLowerCase());
 }
 
-// ──────────────────────────────────────────
-//  STATE
-// ──────────────────────────────────────────
-let books=[], vocab=[], currentBook=null;
+/* Books in IDB meta */
+async function saveBooksIndex(){
+  await dbPut('meta',{key:'books_index',value:books.map(b=>({id:b.id,title:b.title,author:b.author,cover:b.cover,addedAt:b.addedAt}))});
+}
+async function loadBooksIndex(){
+  const row=await dbGet('meta','books_index');
+  return row?row.value:[];
+}
+
+/* ═══ STATE ═══ */
+let books=[], currentBook=null;
 let epubInst=null, rendition=null;
-let fcIdx=0, fcFlipped=false, shuffled=[];
-let currentView='lib-view', fromView='lib-view';
+let currentView='lib-view';
+let currentFolderBookId=null; // null = All Vocabulary
 
-// Prefs (localStorage)
-const PREFS_KEY = 'lr_prefs';
-let prefs = { theme:'light', ff:'lora', fz:18, ls:'1.8', mg:'44' };
+// Prefs (localStorage only — lightweight)
+const PREFS_KEY='lr_prefs';
+let prefs={theme:'light',ff:'lora',fz:18,ls:'1.8',mg:'44'};
+function loadPrefs(){try{const p=JSON.parse(localStorage.getItem(PREFS_KEY));if(p)prefs={...prefs,...p}}catch(e){}}
+function savePrefs(){localStorage.setItem(PREFS_KEY,JSON.stringify(prefs))}
 
-function loadPrefs() {
-  try { const p = JSON.parse(localStorage.getItem(PREFS_KEY)); if(p) prefs = {...prefs, ...p}; } catch(e){}
-}
-function savePrefs() { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); }
-function saveVocab()  { localStorage.setItem('lr_vocab', JSON.stringify(vocab)); }
-
-// ──────────────────────────────────────────
-//  INIT
-// ──────────────────────────────────────────
-window.onload = async () => {
-  if (typeof ePub === 'undefined') {
-    document.body.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;gap:16px;padding:32px;text-align:center;font-family:sans-serif">
-      <div style="font-size:3rem">⚠️</div>
-      <div style="font-size:1.2rem;font-weight:600">Gagal memuat epub.js</div>
-      <div style="color:#888;font-size:.9rem">Pastikan kamu terhubung ke internet, lalu refresh halaman.</div>
-      <button onclick="location.reload()" style="padding:10px 28px;border-radius:100px;background:#c0392b;color:#fff;border:none;cursor:pointer;font-size:.9rem;margin-top:8px">🔄 Refresh</button>
-    </div>`;
+/* ═══ INIT ═══ */
+window.onload=async()=>{
+  if(typeof ePub==='undefined'){
+    document.body.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;gap:16px;padding:32px;text-align:center;font-family:sans-serif"><div style="font-size:3rem">⚠️</div><div style="font-size:1.2rem;font-weight:600">Gagal memuat epub.js</div><div style="color:#888;font-size:.9rem">Pastikan kamu terhubung ke internet, lalu refresh halaman.</div><button onclick="location.reload()" style="padding:10px 28px;border-radius:100px;background:#c0392b;color:#fff;border:none;cursor:pointer;font-size:.9rem;margin-top:8px">🔄 Refresh</button></div>`;
     return;
   }
-  try { await openDB(); } catch(e) {
-    alert('Browser tidak mendukung IndexedDB. Coba Chrome/Firefox.'); return;
-  }
-
-  loadPrefs();
-  applyPrefsToUI();
-  applyTheme(prefs.theme);
-
-  books = await loadBooksIndex();
-  try { vocab = JSON.parse(localStorage.getItem('lr_vocab')||'[]') } catch(e){ vocab=[]; }
-
-  renderLib();
-  document.getElementById('epub-upload').addEventListener('change', handleUpload);
-  document.getElementById('fc-back-btn').onclick = () => showView(fromView==='reader-view'?'reader-view':'lib-view');
+  try{await openDB()}catch(e){alert('Browser tidak mendukung IndexedDB. Coba Chrome/Firefox.');return}
+  loadPrefs(); applyPrefsToUI(); applyTheme(prefs.theme);
+  books=await loadBooksIndex();
+  renderLib(); updateBadge();
+  document.getElementById('epub-upload').addEventListener('change',handleUpload);
 };
 
-function applyPrefsToUI() {
-  // theme pills
-  document.querySelectorAll('.theme-pill').forEach(p => p.classList.toggle('active', p.dataset.themeVal === prefs.theme));
-  // font btns
-  document.querySelectorAll('.font-btn').forEach(b => b.classList.toggle('active', b.dataset.ff === prefs.ff));
-  // fz
-  document.getElementById('fz-slider').value = prefs.fz;
-  document.getElementById('fz-val-lbl').textContent = prefs.fz + 'px';
-  // ls
-  document.querySelectorAll('.ls-btn').forEach(b => b.classList.toggle('active', b.dataset.ls === prefs.ls));
-  // mg
-  document.querySelectorAll('.mg-btn').forEach(b => b.classList.toggle('active', b.dataset.mg === prefs.mg));
+function applyPrefsToUI(){
+  document.querySelectorAll('.theme-pill').forEach(p=>p.classList.toggle('active',p.dataset.themeVal===prefs.theme));
+  document.querySelectorAll('.font-btn').forEach(b=>b.classList.toggle('active',b.dataset.ff===prefs.ff));
+  document.getElementById('fz-slider').value=prefs.fz;
+  document.getElementById('fz-val-lbl').textContent=prefs.fz+'px';
+  document.querySelectorAll('.ls-btn').forEach(b=>b.classList.toggle('active',b.dataset.ls===prefs.ls));
+  document.querySelectorAll('.mg-btn').forEach(b=>b.classList.toggle('active',b.dataset.mg===prefs.mg));
 }
 
-// ──────────────────────────────────────────
-//  VIEWS
-// ──────────────────────────────────────────
-function showView(id) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+/* ═══ VIEWS ═══ */
+function showView(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  currentView = id;
+  currentView=id;
 }
-function goFC() { fromView=currentView; showView('fc-view'); renderVocab(); updateBadge(); setupQuiz(); }
 
-// ──────────────────────────────────────────
-//  UPLOAD
-// ──────────────────────────────────────────
-async function handleUpload(e) {
-  const files = Array.from(e.target.files);
-  if (!files.length) return;
-  for (const f of files) {
-    showLoad('Memproses ' + f.name + '…');
-    try {
-      const ab   = await f.arrayBuffer();
-      const meta = await extractMeta(ab, f.name);
-      const id   = Date.now() + '_' + Math.floor(Math.random()*99999);
-      meta.id = id; meta.addedAt = Date.now();
-      await dbPut('books', { id, data: ab });
+/* ═══ UPLOAD ═══ */
+async function handleUpload(e){
+  const files=Array.from(e.target.files);
+  if(!files.length) return;
+  for(const f of files){
+    showLoad('Memproses '+f.name+'…');
+    try{
+      const ab=await f.arrayBuffer();
+      const meta=await extractMeta(ab,f.name);
+      const id=Date.now()+'_'+Math.floor(Math.random()*99999);
+      meta.id=id; meta.addedAt=Date.now();
+      await dbPut('books',{id,data:ab});
       books.unshift(meta);
       await saveBooksIndex();
-    } catch(err) { toast('Gagal: ' + f.name); console.error(err); }
+    }catch(err){toast('Gagal: '+f.name);console.error(err)}
   }
-  hideLoad(); renderLib(); e.target.value='';
+  hideLoad(); renderLib(); updateBadge(); e.target.value='';
 }
 
-async function extractMeta(ab, filename) {
-  const m = { title: filename.replace(/\.epub$/i,''), author:'', cover:null };
-  try {
-    const zip    = await JSZip.loadAsync(ab);
-    const cxml   = await zip.file('META-INF/container.xml')?.async('text');
-    if (!cxml) return m;
-    const parser = new DOMParser();
-    const opfPath = parser.parseFromString(cxml,'text/xml').querySelector('rootfile')?.getAttribute('full-path');
-    if (!opfPath) return m;
-    const opfxml = await zip.file(opfPath)?.async('text');
-    if (!opfxml) return m;
-    const opf    = parser.parseFromString(opfxml,'text/xml');
-    const t = opf.querySelector('title');   if(t) m.title  = t.textContent.trim();
-    const c = opf.querySelector('creator'); if(c) m.author = c.textContent.trim();
-    // cover
-    let coverId = null;
-    const ci = opf.querySelector('item[properties="cover-image"]');
-    if (ci) coverId = ci.getAttribute('id');
-    if (!coverId) { const me = opf.querySelector('meta[name="cover"]'); if(me) coverId = me.getAttribute('content'); }
-    if (!coverId) {
-      for (const item of opf.querySelectorAll('item')) {
-        const iid  = (item.getAttribute('id')||'').toLowerCase();
-        const href = (item.getAttribute('href')||'').toLowerCase();
-        const mt   = item.getAttribute('media-type')||'';
-        if ((iid.includes('cover')||href.includes('cover')) && mt.startsWith('image/')) { coverId=item.getAttribute('id'); break; }
+async function extractMeta(ab,filename){
+  const m={title:filename.replace(/\.epub$/i,''),author:'',cover:null};
+  try{
+    const zip=await JSZip.loadAsync(ab);
+    const cxml=await zip.file('META-INF/container.xml')?.async('text');
+    if(!cxml) return m;
+    const parser=new DOMParser();
+    const opfPath=parser.parseFromString(cxml,'text/xml').querySelector('rootfile')?.getAttribute('full-path');
+    if(!opfPath) return m;
+    const opfxml=await zip.file(opfPath)?.async('text');
+    if(!opfxml) return m;
+    const opf=parser.parseFromString(opfxml,'text/xml');
+    const t=opf.querySelector('title'); if(t) m.title=t.textContent.trim();
+    const c=opf.querySelector('creator'); if(c) m.author=c.textContent.trim();
+    let coverId=null;
+    const ci=opf.querySelector('item[properties="cover-image"]');
+    if(ci) coverId=ci.getAttribute('id');
+    if(!coverId){const me=opf.querySelector('meta[name="cover"]');if(me) coverId=me.getAttribute('content')}
+    if(!coverId){
+      for(const item of opf.querySelectorAll('item')){
+        const iid=(item.getAttribute('id')||'').toLowerCase();
+        const href=(item.getAttribute('href')||'').toLowerCase();
+        const mt=item.getAttribute('media-type')||'';
+        if((iid.includes('cover')||href.includes('cover'))&&mt.startsWith('image/')){coverId=item.getAttribute('id');break}
       }
     }
-    if (coverId) {
-      const mi = opf.querySelector(`item[id="${coverId}"]`);
-      if (mi) {
-        const href = mi.getAttribute('href');
-        const dir  = opfPath.includes('/')?opfPath.substring(0,opfPath.lastIndexOf('/')+1):'';
-        const img  = zip.file(dir+href)||zip.file(decodeURIComponent(dir+href));
-        if (img) {
-          const data = await img.async('base64');
-          m.cover = `data:${mi.getAttribute('media-type')||'image/jpeg'};base64,${data}`;
-        }
+    if(coverId){
+      const mi=opf.querySelector(`item[id="${coverId}"]`);
+      if(mi){
+        const href=mi.getAttribute('href');
+        const dir=opfPath.includes('/')?opfPath.substring(0,opfPath.lastIndexOf('/')+1):'';
+        const img=zip.file(dir+href)||zip.file(decodeURIComponent(dir+href));
+        if(img){const data=await img.async('base64');m.cover=`data:${mi.getAttribute('media-type')||'image/jpeg'};base64,${data}`}
       }
     }
-  } catch(e) { console.warn(e); }
+  }catch(e){console.warn(e)}
   return m;
 }
 
-// ──────────────────────────────────────────
-//  LIBRARY
-// ──────────────────────────────────────────
-const COLORS = ['cc0','cc1','cc2','cc3','cc4','cc5'];
-function renderLib() {
-  const grid  = document.getElementById('book-grid');
-  const empty = document.getElementById('empty-state');
-  if (!books.length) { grid.style.display='none'; empty.style.display='flex'; updateBadge(); return; }
+/* ═══ LIBRARY ═══ */
+const COLORS=['cc0','cc1','cc2','cc3','cc4','cc5'];
+async function renderLib(){
+  const grid=document.getElementById('book-grid');
+  const empty=document.getElementById('empty-state');
+  if(!books.length){grid.style.display='none';empty.style.display='flex';return}
   grid.style.display='grid'; empty.style.display='none';
-  grid.innerHTML = books.map((bk,i)=>`
-    <div class="book-card" onclick="openBook('${bk.id}')">
+  // Get vocab counts per book
+  const allVocab=await getAllVocab();
+  const cntMap={};
+  allVocab.forEach(v=>{cntMap[v.bookId]=(cntMap[v.bookId]||0)+1});
+  grid.innerHTML=books.map((bk,i)=>{
+    const cnt=cntMap[bk.id]||0;
+    return `<div class="book-card" onclick="openBook('${bk.id}')">
       <div class="book-cover">
         <div class="book-spine"></div>
-        ${bk.cover
-          ?`<img src="${bk.cover}" alt="${esc(bk.title)}" loading="lazy">`
-          :`<div class="book-cover-ph ${COLORS[i%6]}"><div style="font-size:2rem;color:rgba(255,255,255,.7)">📖</div><div class="cover-t">${esc(bk.title)}</div></div>`}
+        ${bk.cover?`<img src="${bk.cover}" alt="${esc(bk.title)}" loading="lazy">`:`<div class="book-cover-ph ${COLORS[i%6]}"><div style="font-size:2rem;color:rgba(255,255,255,.7)">📖</div><div class="cover-t">${esc(bk.title)}</div></div>`}
         <button class="book-del" onclick="event.stopPropagation();delBook('${bk.id}')">✕</button>
       </div>
       <div class="book-meta">
         <div class="book-ttl">${esc(bk.title)}</div>
         ${bk.author?`<div class="book-auth">${esc(bk.author)}</div>`:''}
+        ${cnt?`<div class="book-vocab-cnt">📝 ${cnt} kata</div>`:''}
       </div>
-    </div>`).join('');
-  updateBadge();
+    </div>`;
+  }).join('');
 }
 
-async function delBook(id) {
-  if (!confirm('Hapus buku ini?')) return;
-  books = books.filter(b=>String(b.id)!==String(id));
+async function delBook(id){
+  if(!confirm('Hapus buku ini? Semua kosakata dari buku ini juga akan dihapus.')) return;
+  books=books.filter(b=>String(b.id)!==String(id));
   await saveBooksIndex();
-  await dbDel('books', id);
+  await dbDel('books',id);
+  await deleteVocabByBook(id); // Cascading delete
   localStorage.removeItem('cfi_'+id);
-  renderLib(); toast('Buku dihapus');
+  renderLib(); updateBadge(); toast('Buku & kosakata terkait dihapus');
 }
 
-// ──────────────────────────────────────────
-//  READER
-// ──────────────────────────────────────────
-async function openBook(id) {
-  const bk = books.find(b=>String(b.id)===String(id));
-  if (!bk) return;
-  currentBook = bk;
+/* ═══ READER ═══ */
+async function openBook(id){
+  const bk=books.find(b=>String(b.id)===String(id));
+  if(!bk) return;
+  currentBook=bk;
   showView('reader-view');
-  document.getElementById('rdr-title').textContent = bk.title;
-  document.getElementById('epub-viewer').innerHTML = '';
-  document.getElementById('prog-fill').style.width = '0%';
-  document.getElementById('pg-info').textContent   = '0%';
-  document.getElementById('toc-list').innerHTML    = '<div style="padding:20px;color:var(--text3);font-size:.85rem;text-align:center">Memuat…</div>';
-
-  if (rendition) { try{rendition.destroy();}catch(e){} rendition=null; }
-  if (epubInst)  { try{epubInst.destroy();}catch(e){}  epubInst=null;  }
-
+  document.getElementById('rdr-title').textContent=bk.title;
+  document.getElementById('epub-viewer').innerHTML='';
+  document.getElementById('prog-fill').style.width='0%';
+  document.getElementById('pg-info').textContent='0%';
+  document.getElementById('toc-list').innerHTML='<div style="padding:20px;color:var(--text3);font-size:.85rem;text-align:center">Memuat…</div>';
+  if(rendition){try{rendition.destroy()}catch(e){}rendition=null}
+  if(epubInst){try{epubInst.destroy()}catch(e){}epubInst=null}
   showLoad('Membuka buku…');
-
-  try {
-    const row = await dbGet('books', id);
-    if (!row||!row.data) throw new Error('Data tidak ditemukan. Upload ulang buku ini.');
-
-    epubInst = ePub(row.data, { openAs:'binary' });
+  try{
+    const row=await dbGet('books',id);
+    if(!row||!row.data) throw new Error('Data tidak ditemukan. Upload ulang buku ini.');
+    epubInst=ePub(row.data,{openAs:'binary'});
     await epubInst.ready;
-
-    const isLandscape = window.innerWidth > window.innerHeight;
-    const cont = document.querySelector('.rdr-container');
-    const w = Math.max(cont.clientWidth, 300);
-    const h = Math.max(cont.clientHeight, 400);
-
-    rendition = epubInst.renderTo('epub-viewer', {
-      width:  w,
-      height: h,
-      spread: isLandscape ? 'always' : 'none',
-      flow:   'paginated',
-      allowScriptedContent: true
-    });
-
+    const isLandscape=window.innerWidth>window.innerHeight;
+    const cont=document.querySelector('.rdr-container');
+    const w=Math.max(cont.clientWidth,300);
+    const h=Math.max(cont.clientHeight,400);
+    rendition=epubInst.renderTo('epub-viewer',{width:w,height:h,spread:isLandscape?'always':'none',flow:'paginated',allowScriptedContent:true});
     applyRenditionTheme();
-
-    const savedCfi = localStorage.getItem('cfi_'+id);
+    const savedCfi=localStorage.getItem('cfi_'+id);
     await rendition.display(savedCfi||undefined);
-
-    // TOC
-    try {
-      const toc = epubInst.navigation?.toc || [];
-      renderTOC(toc);
-    } catch(e) { console.warn('TOC error', e); }
-
+    try{const toc=epubInst.navigation?.toc||[];renderTOC(toc)}catch(e){console.warn('TOC',e)}
     setupReaderEvents();
     hideLoad();
-
-  } catch(err) {
+  }catch(err){
     hideLoad(); console.error(err);
     toast('Gagal: '+(err.message||'Error tidak diketahui'));
     showView('lib-view');
   }
 }
 
-function getReaderCSS() {
-  const themeMap = {
-    light: { bg:'#ffffff', text:'#1a1a1a' },
-    sepia: { bg:'#fdf6e3', text:'#3d2b1f' },
-    dark:  { bg:'#1a1a1a', text:'#d8d0c0' }
-  };
-  const colors = themeMap[prefs.theme] || themeMap.light;
-
-  const fontMap = {
-    lora:     `'Lora', Georgia, serif`,
-    inter:    `'Inter', 'Helvetica Neue', Arial, sans-serif`,
-    dyslexic: `'Comic Sans MS', 'OpenDyslexic', cursive`
-  };
-  const ff = fontMap[prefs.ff] || fontMap.lora;
-
-  return {
-    'body': {
-      'font-family':    `${ff} !important`,
-      'font-size':      `${prefs.fz}px !important`,
-      'line-height':    `${prefs.ls} !important`,
-      'color':          `${colors.text} !important`,
-      'background':     `${colors.bg} !important`,
-      'padding-left':   `${prefs.mg}px !important`,
-      'padding-right':  `${prefs.mg}px !important`,
-      'padding-top':    '24px !important',
-      'padding-bottom': '24px !important',
-    },
-    'p': { 'margin-bottom': '0.8em !important' },
-    'a': { 'color': '#c0392b !important' },
-    '*': { 'max-width': '100% !important' }
+function getReaderCSS(){
+  const tm={light:{bg:'#ffffff',text:'#1a1a1a'},sepia:{bg:'#fdf6e3',text:'#3d2b1f'},dark:{bg:'#1a1a1a',text:'#d8d0c0'}};
+  const colors=tm[prefs.theme]||tm.light;
+  const fm={lora:`'Lora', Georgia, serif`,inter:`'Inter', 'Helvetica Neue', Arial, sans-serif`,dyslexic:`'Comic Sans MS', cursive`};
+  const ff=fm[prefs.ff]||fm.lora;
+  return{
+    'body':{'font-family':`${ff} !important`,'font-size':`${prefs.fz}px !important`,'line-height':`${prefs.ls} !important`,'color':`${colors.text} !important`,'background':`${colors.bg} !important`,'padding-left':`${prefs.mg}px !important`,'padding-right':`${prefs.mg}px !important`,'padding-top':'24px !important','padding-bottom':'24px !important'},
+    'p':{'margin-bottom':'0.8em !important'},'a':{'color':'#c0392b !important'},'*':{'max-width':'100% !important'}
   };
 }
+function applyRenditionTheme(){if(!rendition)return;const css=getReaderCSS();rendition.themes.register('lexipro',css);rendition.themes.select('lexipro')}
 
-function applyRenditionTheme() {
-  if (!rendition) return;
-  const css = getReaderCSS();
-  rendition.themes.register('lexipro', css);
-  rendition.themes.select('lexipro');
-}
-
-function setupReaderEvents() {
-  if (!rendition) return;
-
-  rendition.on('relocated', loc => {
-    if (!loc) return;
-    if (currentBook) localStorage.setItem('cfi_'+currentBook.id, loc.start.cfi);
-    const pct = Math.round((loc.start.percentage||0)*100);
-    document.getElementById('prog-fill').style.width  = pct+'%';
-    document.getElementById('pg-info').textContent    = pct+'%';
+function setupReaderEvents(){
+  if(!rendition) return;
+  rendition.on('relocated',loc=>{
+    if(!loc) return;
+    if(currentBook) localStorage.setItem('cfi_'+currentBook.id,loc.start.cfi);
+    const pct=Math.round((loc.start.percentage||0)*100);
+    document.getElementById('prog-fill').style.width=pct+'%';
+    document.getElementById('pg-info').textContent=pct+'%';
   });
-
-  rendition.on('selected', (cfiRange, contents) => {
-    if (!contents) return;
-    const sel  = contents.window.getSelection();
-    if (!sel||sel.isCollapsed) return;
-    const word = sel.toString().trim();
-    if (!word||word.length>80) return;
-    try {
-      const rect     = sel.getRangeAt(0).getBoundingClientRect();
-      const viewerEl = document.getElementById('epub-viewer');
-      const iframe   = viewerEl.querySelector('iframe');
-      const ir       = iframe?iframe.getBoundingClientRect():viewerEl.getBoundingClientRect();
-      showPopup(word, ir.left+rect.left+rect.width/2, ir.top+rect.top);
-    } catch(e) { showPopup(word, window.innerWidth/2, window.innerHeight/3); }
+  rendition.on('selected',(cfiRange,contents)=>{
+    if(!contents) return;
+    const sel=contents.window.getSelection();
+    if(!sel||sel.isCollapsed) return;
+    const word=sel.toString().trim();
+    if(!word||word.length>120) return;
+    try{
+      const rect=sel.getRangeAt(0).getBoundingClientRect();
+      const viewerEl=document.getElementById('epub-viewer');
+      const iframe=viewerEl.querySelector('iframe');
+      const ir=iframe?iframe.getBoundingClientRect():viewerEl.getBoundingClientRect();
+      showPopup(word,ir.left+rect.left+rect.width/2,ir.top+rect.top);
+    }catch(e){showPopup(word,window.innerWidth/2,window.innerHeight/3)}
   });
-
-  rendition.on('keyup', e => {
-    if (['ArrowRight','ArrowDown',' '].includes(e.key)) nextPage();
-    if (['ArrowLeft','ArrowUp'].includes(e.key)) prevPage();
+  rendition.on('keyup',e=>{
+    if(['ArrowRight','ArrowDown',' '].includes(e.key)) nextPage();
+    if(['ArrowLeft','ArrowUp'].includes(e.key)) prevPage();
   });
 }
 
-function nextPage() { if(rendition) rendition.next().catch(()=>{}); }
-function prevPage() { if(rendition) rendition.prev().catch(()=>{}); }
-function exitReader() { closePopup(); closeTOC(); showView('lib-view'); }
+function nextPage(){if(rendition) rendition.next().catch(()=>{})}
+function prevPage(){if(rendition) rendition.prev().catch(()=>{})}
+function exitReader(){closePopup();closeTOC();showView('lib-view')}
 
-// TOC
-function renderTOC(toc) {
-  const el = document.getElementById('toc-list');
-  if (!toc||!toc.length) {
-    el.innerHTML='<div style="padding:20px;color:var(--text3);font-size:.85rem;text-align:center">Tidak ada daftar isi.</div>';
-    return;
-  }
-  const buildItems = (items, level=0) => items.map(item => {
-    const lvlClass = level===0?'':(level===1?'toc-l2':'toc-l3');
-    const sub = item.subitems&&item.subitems.length ? buildItems(item.subitems, level+1) : '';
-    return `<button class="toc-item ${lvlClass}" onclick="goTOC('${esc(item.href||'')}')">${esc(item.label||'...')}</button>${sub}`;
+function renderTOC(toc){
+  const el=document.getElementById('toc-list');
+  if(!toc||!toc.length){el.innerHTML='<div style="padding:20px;color:var(--text3);font-size:.85rem;text-align:center">Tidak ada daftar isi.</div>';return}
+  const buildItems=(items,level=0)=>items.map(item=>{
+    const lc=level===0?'':(level===1?'toc-l2':'toc-l3');
+    const sub=item.subitems&&item.subitems.length?buildItems(item.subitems,level+1):'';
+    return `<button class="toc-item ${lc}" onclick="goTOC('${esc(item.href||'')}')">${esc(item.label||'...')}</button>${sub}`;
   }).join('');
-  el.innerHTML = buildItems(toc);
+  el.innerHTML=buildItems(toc);
+}
+function goTOC(href){if(!rendition||!href)return;rendition.display(href).catch(e=>console.warn(e));closeTOC()}
+function openTOC(){document.getElementById('toc-sidebar').classList.add('open');document.getElementById('toc-overlay').classList.add('open')}
+function closeTOC(){document.getElementById('toc-sidebar').classList.remove('open');document.getElementById('toc-overlay').classList.remove('open')}
+
+function seekProgress(e){
+  if(!epubInst||!rendition) return;
+  const pct=e.offsetX/e.currentTarget.offsetWidth;
+  const cfi=epubInst.locations.cfiFromPercentage(pct);
+  if(cfi) rendition.display(cfi).catch(()=>{});
 }
 
-function goTOC(href) {
-  if (!rendition||!href) return;
-  rendition.display(href).catch(e=>console.warn(e));
-  closeTOC();
-}
-
-function openTOC()  { document.getElementById('toc-sidebar').classList.add('open'); document.getElementById('toc-overlay').classList.add('open'); }
-function closeTOC() { document.getElementById('toc-sidebar').classList.remove('open'); document.getElementById('toc-overlay').classList.remove('open'); }
-
-// Progress seek
-function seekProgress(e) {
-  if (!epubInst||!rendition) return;
-  const track = e.currentTarget;
-  const pct   = e.offsetX / track.offsetWidth;
-  const cfi   = epubInst.locations.cfiFromPercentage(pct);
-  if (cfi) rendition.display(cfi).catch(()=>{});
-}
-
-// Orientation / resize
 let orientTimer;
-function handleOrientationChange() {
+function handleOrientationChange(){
   clearTimeout(orientTimer);
-  orientTimer = setTimeout(() => {
-    if (!rendition||currentView!=='reader-view') return;
-    const isLandscape = window.innerWidth > window.innerHeight;
+  orientTimer=setTimeout(()=>{
+    if(!rendition||currentView!=='reader-view') return;
+    const isLandscape=window.innerWidth>window.innerHeight;
     rendition.spread(isLandscape?'always':'none');
-    const cont = document.querySelector('.rdr-container');
-    rendition.resize(cont.clientWidth, cont.clientHeight);
-  }, 350);
+    const cont=document.querySelector('.rdr-container');
+    rendition.resize(cont.clientWidth,cont.clientHeight);
+  },350);
 }
-window.addEventListener('resize', handleOrientationChange);
-window.addEventListener('orientationchange', handleOrientationChange);
+window.addEventListener('resize',handleOrientationChange);
+window.addEventListener('orientationchange',handleOrientationChange);
 
-// Keyboard
-document.addEventListener('keydown', e => {
-  if (currentView==='reader-view') {
-    if (['ArrowRight','ArrowDown',' '].includes(e.key)) { e.preventDefault(); nextPage(); }
-    if (['ArrowLeft','ArrowUp'].includes(e.key))        { e.preventDefault(); prevPage(); }
-    if (e.key==='Escape') { closePopup(); closeTOC(); closeSettings(); }
+document.addEventListener('keydown',e=>{
+  if(currentView==='reader-view'){
+    if(['ArrowRight','ArrowDown',' '].includes(e.key)){e.preventDefault();nextPage()}
+    if(['ArrowLeft','ArrowUp'].includes(e.key)){e.preventDefault();prevPage()}
+    if(e.key==='Escape'){closePopup();closeTOC();closeSettings()}
   }
 });
 
-// ──────────────────────────────────────────
-//  SETTINGS
-// ──────────────────────────────────────────
-function openSettings()  { document.getElementById('settings-modal').classList.add('open'); }
-function closeSettings() { document.getElementById('settings-modal').classList.remove('open'); }
-
-function applyTheme(t) {
-  document.body.setAttribute('data-theme', t);
-  prefs.theme = t;
-  document.querySelectorAll('.theme-pill').forEach(p => p.classList.toggle('active', p.dataset.themeVal===t));
-  savePrefs();
-  applyRenditionTheme();
-}
-function setTheme(t) { applyTheme(t); }
-
-function setFF(ff) {
-  prefs.ff = ff;
-  document.querySelectorAll('.font-btn').forEach(b => b.classList.toggle('active', b.dataset.ff===ff));
+/* ═══ SETTINGS ═══ */
+function openSettings(){document.getElementById('settings-modal').classList.add('open')}
+function closeSettings(){document.getElementById('settings-modal').classList.remove('open')}
+function applyTheme(t){
+  document.body.setAttribute('data-theme',t); prefs.theme=t;
+  document.querySelectorAll('.theme-pill').forEach(p=>p.classList.toggle('active',p.dataset.themeVal===t));
   savePrefs(); applyRenditionTheme();
 }
+function setTheme(t){applyTheme(t)}
+function setFF(ff){prefs.ff=ff;document.querySelectorAll('.font-btn').forEach(b=>b.classList.toggle('active',b.dataset.ff===ff));savePrefs();applyRenditionTheme()}
+function onFZSlide(v){prefs.fz=parseInt(v);document.getElementById('fz-val-lbl').textContent=prefs.fz+'px';savePrefs();applyRenditionTheme()}
+function stepFZ(d){prefs.fz=Math.max(14,Math.min(40,prefs.fz+d));document.getElementById('fz-slider').value=prefs.fz;document.getElementById('fz-val-lbl').textContent=prefs.fz+'px';savePrefs();applyRenditionTheme()}
+function setLS(ls){prefs.ls=ls;document.querySelectorAll('.ls-btn').forEach(b=>b.classList.toggle('active',b.dataset.ls===ls));savePrefs();applyRenditionTheme()}
+function setMG(mg){prefs.mg=mg;document.querySelectorAll('.mg-btn').forEach(b=>b.classList.toggle('active',b.dataset.mg===mg));savePrefs();applyRenditionTheme()}
 
-function onFZSlide(v) {
-  prefs.fz = parseInt(v);
-  document.getElementById('fz-val-lbl').textContent = prefs.fz + 'px';
-  savePrefs(); applyRenditionTheme();
+/* ═══ TEXT CLEANING ═══ */
+function cleanWord(raw){
+  // Remove punctuation, trim, lowercase
+  let w=raw.replace(/[^\w\s'\-]/g,'').trim();
+  // Handle multi-word phrases gracefully
+  if(w.split(/\s+/).length>1) return w; // keep phrase as-is
+  w=w.toLowerCase();
+  return w;
 }
-function stepFZ(d) {
-  prefs.fz = Math.max(14, Math.min(40, prefs.fz + d));
-  document.getElementById('fz-slider').value = prefs.fz;
-  document.getElementById('fz-val-lbl').textContent = prefs.fz + 'px';
-  savePrefs(); applyRenditionTheme();
-}
-
-function setLS(ls) {
-  prefs.ls = ls;
-  document.querySelectorAll('.ls-btn').forEach(b => b.classList.toggle('active', b.dataset.ls===ls));
-  savePrefs(); applyRenditionTheme();
-}
-
-function setMG(mg) {
-  prefs.mg = mg;
-  document.querySelectorAll('.mg-btn').forEach(b => b.classList.toggle('active', b.dataset.mg===mg));
-  savePrefs(); applyRenditionTheme();
-}
-
-// ──────────────────────────────────────────
-//  POPUP / TRANSLATE
-// ──────────────────────────────────────────
-function showPopup(word, x, y) {
-  const pop = document.getElementById('dict-popup');
-  document.getElementById('popup-word').textContent = word;
-  document.getElementById('popup-body').innerHTML   = '<div class="popup-load"><div class="spinner"></div> Menerjemahkan…</div>';
-  const pw=316, ph=185, vw=window.innerWidth, vh=window.innerHeight;
-  let left = Math.max(8, Math.min(x-pw/2, vw-pw-8));
-  let top  = y-ph-14; if(top<8) top=y+38; if(top+ph>vh-8) top=vh-ph-8;
-  pop.style.cssText = `left:${left}px;top:${top}px;display:block`;
-  // setTimeout(0) wajib — mencegah konflik postMessage dari epub.js iframe
-  setTimeout(() => doTranslate(word), 0);
-}
-function closePopup() { document.getElementById('dict-popup').style.display='none'; }
-
-// Fetch tanpa AbortController (tidak kompatibel dengan konteks epub iframe)
-function safeFetch(url, opts) {
-  return new Promise((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error('timeout')), 7000);
-    fetch(url, opts || {})
-      .then(r => { clearTimeout(timer); resolve(r); })
-      .catch(e => { clearTimeout(timer); reject(e); });
-  });
-}
-
-// Lemmatisasi sederhana untuk fallback
-function lemmatize(w) {
-  if (w.length > 5 && w.endsWith('ing')) return w.slice(0, -3);
-  if (w.length > 4 && w.endsWith('ed'))  return w.slice(0, -2);
-  if (w.length > 3 && w.endsWith('s'))   return w.slice(0, -1);
+function lemmatize(w){
+  // Simple fallback lemmatization
+  if(w.endsWith('ing')&&w.length>5) return w.slice(0,-3);
+  if(w.endsWith('tion')&&w.length>5) return w;
+  if(w.endsWith('ed')&&w.length>4) return w.slice(0,-2);
+  if(w.endsWith('s')&&w.length>3) return w.slice(0,-1);
   return w;
 }
 
-// Render isi popup dengan terjemahan yang sudah didapat
-function renderPopup(clean, tr) {
-  const saved = vocab.some(v => v.en.toLowerCase() === clean.toLowerCase());
-  const trOk  = tr && tr !== 'Terjemahan tidak ditemukan';
-  document.getElementById('popup-body').innerHTML = `
-    <div style="font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Bahasa Indonesia</div>
-    <div class="popup-trans" id="popup-tr-display">${esc(tr)}</div>
-    <div class="popup-actions">
-      ${saved
-        ? `<span style="font-size:.76rem;color:var(--green);padding:6px 10px;font-weight:500">✓ Tersimpan</span>`
-        : `<button class="btn btn-primary" style="font-size:.76rem;padding:7px 13px"
-             onclick="saveFC('${esc(clean)}','${esc(trOk ? tr : '')}')">💾 Simpan</button>`}
-      <button class="btn btn-ghost" style="font-size:.76rem;padding:7px 13px"
-        onclick="showManualEdit('${esc(clean)}','${esc(trOk ? tr : '')}')">✏️ Edit</button>
-      <button class="btn btn-ghost" style="font-size:.76rem;padding:7px 13px" onclick="closePopup()">Tutup</button>
-    </div>`;
+/* ═══ TRANSLATION ENGINE (multi-source, NO AbortController) ═══
+   AbortController tidak bisa dipakai di dalam iframe epub.js.
+   Pakai Promise.race + setTimeout untuk timeout yang aman.
+══════════════════════════════════════════════════════════════ */
+function fetchWithTimeout(url, opts, ms){
+  // Jangan pakai AbortController — tidak kompatibel di konteks epub iframe.
+  // Cukup race antara fetch dan reject timer biasa.
+  return new Promise((resolve, reject)=>{
+    const timer=setTimeout(()=>reject(new Error('timeout')), ms);
+    fetch(url, opts).then(r=>{ clearTimeout(timer); resolve(r); }).catch(e=>{ clearTimeout(timer); reject(e); });
+  });
 }
 
-// Form edit manual
-function showManualEdit(clean, currentTr) {
-  document.getElementById('popup-body').innerHTML = `
-    <div style="font-size:.72rem;color:var(--text3);margin-bottom:6px">Edit terjemahan manual:</div>
-    <input id="manual-tr-input" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:7px 10px;font-size:.88rem;font-family:'DM Sans',sans-serif;background:var(--bg2);color:var(--text);outline:none;margin-bottom:8px"
-      placeholder="Ketik arti…" value="${esc(currentTr)}">
-    <div class="popup-actions">
-      <button class="btn btn-primary" style="font-size:.76rem;padding:7px 13px"
-        onclick="saveFC('${esc(clean)}', document.getElementById('manual-tr-input').value.trim())">💾 Simpan</button>
-      <button class="btn btn-ghost" style="font-size:.76rem;padding:7px 13px"
-        onclick="renderPopup('${esc(clean)}','${esc(currentTr)}')">← Kembali</button>
-    </div>`;
-  setTimeout(() => document.getElementById('manual-tr-input')?.focus(), 50);
-}
+async function translateWord(word){
+  const q=encodeURIComponent(word);
 
-async function doTranslate(word) {
-  const clean = word.replace(/[^a-zA-Z\s'\-]/g, '').trim();
-  if (!clean) {
-    document.getElementById('popup-body').innerHTML =
-      `<div class="popup-trans" style="color:var(--text3)">Pilih kata berbahasa Inggris.</div>
-       <div class="popup-actions"><button class="btn btn-ghost" style="font-size:.78rem" onclick="closePopup()">Tutup</button></div>`;
-    return;
-  }
-
-  // ── Sumber 1: MyMemory ──
-  try {
-    const res = await safeFetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(clean)}&langpair=en%7Cid`);
-    if (res.ok) {
-      const d = await res.json();
-      if (d.responseStatus === 200 && d.responseData?.translatedText) {
-        const tr = d.responseData.translatedText.trim();
-        if (tr && tr.toLowerCase() !== clean.toLowerCase() && !/PLEASE SELECT/i.test(tr)) {
-          renderPopup(clean, tr);
-          return;
+  // ── Source 1: MyMemory ──
+  try{
+    const res=await fetchWithTimeout(
+      `https://api.mymemory.translated.net/get?q=${q}&langpair=en%7Cid`,
+      {}, 6000
+    );
+    if(res.ok){
+      const d=await res.json();
+      if(d.responseStatus===200&&d.responseData?.translatedText){
+        const tr=d.responseData.translatedText.trim();
+        if(tr&&tr.toLowerCase()!==word.toLowerCase()&&!/PLEASE SELECT/i.test(tr)){
+          return{text:tr,source:'MyMemory'};
         }
       }
     }
-  } catch(e) { console.warn('MyMemory:', e.message); }
+  }catch(e){console.warn('MyMemory:',e.message)}
 
-  // ── Sumber 2: LibreTranslate (instance publik, CORS terbuka) ──
-  const hosts = ['https://translate.terraprint.co', 'https://lt.vern.cc'];
-  for (const host of hosts) {
-    try {
-      const res = await safeFetch(`${host}/translate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ q: clean, source: 'en', target: 'id', format: 'text' })
-      });
-      if (res.ok) {
-        const d = await res.json();
-        const tr = (d.translatedText || '').trim();
-        if (tr && tr.toLowerCase() !== clean.toLowerCase()) {
-          renderPopup(clean, tr);
-          return;
+  // ── Source 2: LibreTranslate public instances ──
+  const libreHosts=['https://translate.terraprint.co','https://lt.vern.cc'];
+  for(const host of libreHosts){
+    try{
+      const res=await fetchWithTimeout(`${host}/translate`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({q:word,source:'en',target:'id',format:'text'})
+      }, 6000);
+      if(res.ok){
+        const d=await res.json();
+        const tr=(d.translatedText||'').trim();
+        if(tr&&tr.toLowerCase()!==word.toLowerCase()){
+          return{text:tr,source:'LibreTranslate'};
         }
       }
-    } catch(e) { console.warn(`LibreTranslate ${host}:`, e.message); }
+    }catch(e){console.warn(`LibreTranslate ${host}:`,e.message)}
   }
 
-  // ── Sumber 3: Coba kata dasar (lemma) di MyMemory ──
-  const lem = lemmatize(clean.toLowerCase());
-  if (lem !== clean.toLowerCase()) {
-    try {
-      const res = await safeFetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(lem)}&langpair=en%7Cid`);
-      if (res.ok) {
-        const d = await res.json();
-        if (d.responseStatus === 200 && d.responseData?.translatedText) {
-          const tr = d.responseData.translatedText.trim();
-          if (tr && tr.toLowerCase() !== lem && !/PLEASE SELECT/i.test(tr)) {
-            renderPopup(clean, tr);
-            return;
+  // ── Source 3: MyMemory dengan bentuk dasar kata ──
+  const lem=lemmatize(word);
+  if(lem!==word){
+    try{
+      const res=await fetchWithTimeout(
+        `https://api.mymemory.translated.net/get?q=${encodeURIComponent(lem)}&langpair=en%7Cid`,
+        {}, 5000
+      );
+      if(res.ok){
+        const d=await res.json();
+        if(d.responseStatus===200&&d.responseData?.translatedText){
+          const tr=d.responseData.translatedText.trim();
+          if(tr&&tr.toLowerCase()!==lem&&!/PLEASE SELECT/i.test(tr)){
+            return{text:tr,source:'MyMemory'};
           }
         }
       }
-    } catch(e) {}
+    }catch(e){}
   }
 
-  // ── Semua sumber gagal → tampilkan form manual ──
-  renderPopup(clean, 'Terjemahan tidak ditemukan');
+  return{text:null,source:null};
 }
 
-document.addEventListener('click', e => {
-  const pop = document.getElementById('dict-popup');
-  if (pop.style.display!=='none' && !pop.contains(e.target)) closePopup();
+async function fetchDictionary(word){
+  try{
+    const res=await fetchWithTimeout(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`,{},6000);
+    if(!res.ok) return null;
+    const data=await res.json();
+    if(!Array.isArray(data)||!data.length) return null;
+    const entry=data[0];
+    const meanings=entry.meanings||[];
+    let definition='',synonyms=[],antonyms=[],example='';
+    for(const m of meanings){
+      if(!definition&&m.definitions?.[0]?.definition) definition=m.definitions[0].definition;
+      if(!example&&m.definitions?.[0]?.example) example=m.definitions[0].example;
+      synonyms=[...synonyms,...(m.synonyms||[])].slice(0,5);
+      antonyms=[...antonyms,...(m.antonyms||[])].slice(0,3);
+    }
+    return{definition,example,synonyms,antonyms};
+  }catch(e){return null}
+}
+
+/* ═══ POPUP ═══ */
+let _currentPopupWord='', _currentPopupTrans='', _currentPopupEntry=null;
+
+function showPopup(word,x,y){
+  const pop=document.getElementById('dict-popup');
+  document.getElementById('popup-word').textContent=word;
+  document.getElementById('popup-body-inner').innerHTML='<div class="popup-load"><div class="spinner"></div> Menerjemahkan…</div>';
+  const pw=340, ph=200, vw=window.innerWidth, vh=window.innerHeight;
+  let left=Math.max(8,Math.min(x-pw/2,vw-pw-8));
+  let top=y-ph-14; if(top<8) top=y+38; if(top+ph>vh-8) top=vh-ph-8;
+  pop.style.cssText=`left:${left}px;top:${top}px;display:block`;
+  // Delay keluar dari epub event loop agar tidak ada postMessage conflict
+  setTimeout(()=>doTranslate(word), 0);
+}
+function closePopup(){document.getElementById('dict-popup').style.display='none'}
+document.addEventListener('click',e=>{
+  const pop=document.getElementById('dict-popup');
+  if(pop.style.display!=='none'&&!pop.contains(e.target)) closePopup();
 });
 
-// ──────────────────────────────────────────
-//  FLASHCARD
-// ──────────────────────────────────────────
-function saveFC(en, id) {
-  if (vocab.some(v=>v.en.toLowerCase()===en.toLowerCase())) { toast('Kata sudah ada!'); return; }
-  vocab.push({ en, id, at:Date.now() });
-  saveVocab(); updateBadge(); toast('✓ "'+en+'" disimpan'); closePopup();
+async function doTranslate(word){
+  const clean=cleanWord(word);
+  if(!clean){
+    renderPopupBody(`<div class="popup-body"><div class="popup-lang-id-lbl">Bahasa Indonesia</div><div class="popup-trans" style="color:var(--text3)">Pilih kata berbahasa Inggris.</div></div><div class="popup-actions"><button class="btn btn-ghost" style="font-size:.76rem" onclick="closePopup()">Tutup</button></div>`);
+    return;
+  }
+  _currentPopupWord=clean;
+  _currentPopupTrans='';
+  _currentPopupEntry=null;
+
+  // Run translation and dictionary in parallel
+  const [trResult, dictEntry]=await Promise.all([translateWord(clean), fetchDictionary(clean)]);
+  _currentPopupEntry=dictEntry;
+
+  const tr=trResult.text;
+  const src=trResult.source;
+  _currentPopupTrans=tr||'';
+
+  const alreadySaved=await vocabExists(clean, currentBook?.id||'manual');
+
+  let bodyHtml=`<div class="popup-body">
+    <div class="popup-lang-id-lbl">Bahasa Indonesia</div>
+    <div id="popup-trans-text" class="popup-trans">${tr?esc(tr):`<span style="color:var(--text3)">Terjemahan tidak ditemukan</span>`}</div>
+    ${src?`<span class="popup-source-badge">${esc(src)}</span>`:''}
+    ${dictEntry?.definition?`<div class="popup-def">${esc(dictEntry.definition)}</div>`:''}
+    ${dictEntry?.synonyms?.length?`<div class="popup-tags">${dictEntry.synonyms.slice(0,4).map(s=>`<span class="popup-tag">≈ ${esc(s)}</span>`).join('')}</div>`:''}
+  </div>
+  <div class="popup-actions">
+    ${alreadySaved
+      ?`<span style="font-size:.76rem;color:var(--green);padding:6px 10px;font-weight:500">✓ Tersimpan</span>`
+      :`<button class="btn btn-primary" style="font-size:.76rem;padding:7px 13px" onclick="saveToFC()">💾 Simpan</button>`}
+    <button class="btn btn-ghost" style="font-size:.76rem;padding:7px 13px" onclick="showManualEdit()">✏️ Edit Arti</button>
+    <button class="btn btn-ghost" style="font-size:.76rem;padding:7px 13px" onclick="closePopup()">Tutup</button>
+  </div>`;
+
+  renderPopupBody(bodyHtml);
 }
 
-function updateBadge() {
-  const b = document.getElementById('fc-badge');
-  const t = document.getElementById('fc-total');
-  if(b){ b.textContent=vocab.length; b.style.display=vocab.length?'inline':'none'; }
-  if(t) t.textContent=vocab.length+' kata';
+function renderPopupBody(html){
+  document.getElementById('popup-body-inner').innerHTML=html;
 }
 
-function renderVocab() {
-  const list  = document.getElementById('vocab-list');
-  const empty = document.getElementById('vocab-empty');
-  if(!list) return;
-  if(!vocab.length){ list.innerHTML=''; if(empty) empty.style.display='block'; return; }
-  if(empty) empty.style.display='none';
-  list.innerHTML=vocab.map((v,i)=>`
-    <div class="vocab-item">
+function showManualEdit(){
+  const w=_currentPopupWord;
+  const cur=_currentPopupTrans;
+  const bodyHtml=`<div class="popup-body">
+    <div class="popup-lang-id-lbl">Edit Terjemahan Manual</div>
+    <input class="popup-manual-input" id="manual-trans" placeholder="Arti dalam Bahasa Indonesia…" value="${esc(cur)}">
+    <input class="popup-manual-input" id="manual-syn" placeholder="Sinonim (pisahkan koma)" value="${_currentPopupEntry?.synonyms?.join(', ')||''}">
+    <input class="popup-manual-input" id="manual-def" placeholder="Definisi singkat (opsional)" value="${esc(_currentPopupEntry?.definition||'')}">
+  </div>
+  <div class="popup-actions">
+    <button class="btn btn-primary" style="font-size:.76rem;padding:7px 13px" onclick="saveManual()">💾 Simpan</button>
+    <button class="btn btn-ghost" style="font-size:.76rem;padding:7px 13px" onclick="doTranslate('${esc(w)}')">← Kembali</button>
+  </div>`;
+  renderPopupBody(bodyHtml);
+}
+
+async function saveManual(){
+  const tr=document.getElementById('manual-trans')?.value?.trim();
+  const synRaw=document.getElementById('manual-syn')?.value?.trim();
+  const def=document.getElementById('manual-def')?.value?.trim();
+  if(!tr){toast('Masukkan terjemahan terlebih dahulu');return}
+  _currentPopupTrans=tr;
+  if(_currentPopupEntry) _currentPopupEntry.definition=def||_currentPopupEntry.definition;
+  else _currentPopupEntry={definition:def||'',synonyms:[],antonyms:[],example:''};
+  _currentPopupEntry.synonyms=synRaw?synRaw.split(',').map(s=>s.trim()).filter(Boolean):[];
+  await saveToFC();
+}
+
+async function saveToFC(){
+  const en=_currentPopupWord;
+  const id=_currentPopupTrans;
+  if(!en){toast('Tidak ada kata untuk disimpan');return}
+  const bookId=currentBook?.id||'manual';
+  const exists=await vocabExists(en,bookId);
+  if(exists){toast('Kata sudah ada di folder ini!');return}
+  const entry={
+    en, id_trans:id,
+    bookId,
+    bookTitle:currentBook?.title||'Manual',
+    definition:_currentPopupEntry?.definition||'',
+    synonyms:_currentPopupEntry?.synonyms||[],
+    antonyms:_currentPopupEntry?.antonyms||[],
+    example:_currentPopupEntry?.example||'',
+    addedAt:Date.now()
+  };
+  await addVocabEntry(entry);
+  updateBadge();
+  toast(`✓ "${en}" disimpan ke "${entry.bookTitle}"`);
+  closePopup();
+  renderLib(); // update vocab count on book card
+}
+
+/* ═══ BADGE ═══ */
+async function updateBadge(){
+  const all=await getAllVocab();
+  const b=document.getElementById('fc-badge');
+  const t=document.getElementById('fc-total-lbl');
+  if(b){b.textContent=all.length;b.style.display=all.length?'inline':'none'}
+  if(t) t.textContent=all.length+' kata';
+}
+
+/* ═══ FLASHCARD FOLDERS ═══ */
+async function renderFolders(){
+  const all=await getAllVocab();
+  const allCount=all.length;
+  // Group by book
+  const folderMap={};
+  for(const bk of books) folderMap[bk.id]={title:bk.title,count:0};
+  folderMap['manual']={title:'Manual / Tanpa Buku',count:0};
+  all.forEach(v=>{
+    if(folderMap[v.bookId]) folderMap[v.bookId].count++;
+    else folderMap[v.bookId]={title:v.bookTitle||'Tidak diketahui',count:1};
+  });
+
+  const listEl=document.getElementById('folder-list');
+  let html=`<div class="folder-item" onclick="openVocabPanel(null)">
+    <div class="folder-icon">📚</div>
+    <div class="folder-info">
+      <div class="folder-name">All Vocabulary</div>
+      <div class="folder-count">${allCount} kata dari semua buku</div>
+    </div>
+    <div class="folder-arrow">›</div>
+  </div>`;
+
+  for(const [id,info] of Object.entries(folderMap)){
+    if(info.count===0) continue;
+    html+=`<div class="folder-item" onclick="openVocabPanel('${esc(id)}')">
+      <div class="folder-icon">📖</div>
+      <div class="folder-info">
+        <div class="folder-name">${esc(info.title)}</div>
+        <div class="folder-count">${info.count} kata</div>
+      </div>
+      <div class="folder-arrow">›</div>
+    </div>`;
+  }
+
+  if(allCount===0){
+    html='<div style="padding:40px;text-align:center;color:var(--text3)"><div style="font-size:2.5rem;opacity:.3;margin-bottom:12px">📝</div><p>Belum ada kosakata tersimpan.</p><p style="font-size:.8rem;margin-top:6px">Pilih kata saat membaca, lalu simpan.</p></div>';
+  }
+  listEl.innerHTML=html;
+  document.getElementById('folder-panel').style.display='block';
+  document.getElementById('vocab-panel').style.display='none';
+}
+
+function switchFcTab(tab){
+  document.querySelectorAll('.fc-nav-tab').forEach((b,i)=>b.classList.toggle('active',(i===0&&tab==='folders')||(i===1&&tab==='vocab')));
+  if(tab==='folders') renderFolders();
+  if(tab==='vocab') openVocabPanel(null);
+}
+
+async function openVocabPanel(bookId){
+  currentFolderBookId=bookId;
+  document.getElementById('folder-panel').style.display='none';
+  document.getElementById('vocab-panel').style.display='flex';
+  const title=bookId===null?'All Vocabulary':(books.find(b=>b.id===bookId)?.title||'Kosakata');
+  document.getElementById('vocab-panel-title').textContent=title;
+  await renderVocabList(bookId);
+}
+
+function showFolderPanel(){
+  document.getElementById('folder-panel').style.display='block';
+  document.getElementById('vocab-panel').style.display='none';
+  renderFolders();
+}
+
+async function renderVocabList(bookId){
+  const items=bookId===null?await getAllVocab():await getVocabByBook(bookId);
+  items.sort((a,b)=>b.addedAt-a.addedAt);
+  const el=document.getElementById('vocab-list-scroll');
+  if(!items.length){
+    el.innerHTML='<div style="padding:30px;text-align:center;color:var(--text3)"><div style="font-size:2rem;opacity:.3">📝</div><p style="margin-top:8px">Belum ada kata di folder ini.</p></div>';
+    return;
+  }
+  el.innerHTML=items.map(v=>`
+    <div class="vocab-item" id="vitem-${v.id}">
       <div class="vocab-en">${esc(v.en)}</div>
       <div class="vocab-sep"></div>
-      <div class="vocab-id">${esc(v.id)}</div>
-      <button class="vocab-del" onclick="delVocab(${i})">✕</button>
+      <div class="vocab-right">
+        <div class="vocab-id">${esc(v.id_trans||'—')}</div>
+        ${v.definition?`<div class="vocab-def">${esc(v.definition)}</div>`:''}
+        ${v.synonyms?.length?`<div class="vocab-syn">≈ ${v.synonyms.slice(0,3).map(esc).join(', ')}</div>`:''}
+        ${bookId===null?`<div style="font-size:.68rem;color:var(--text3);margin-top:2px">📖 ${esc(v.bookTitle||'')}</div>`:''}
+      </div>
+      <div class="vocab-actions">
+        <button class="vocab-edit-btn" onclick="toggleEditForm(${v.id})" title="Edit">✏️</button>
+        <button class="vocab-del-btn" onclick="delVocabEntry(${v.id})" title="Hapus">✕</button>
+      </div>
+    </div>
+    <div id="vedit-${v.id}" style="display:none;padding:0 0 8px">
+      <div class="vocab-edit-form">
+        <input class="vocab-edit-field" id="ef-trans-${v.id}" placeholder="Terjemahan Indonesia" value="${esc(v.id_trans||'')}">
+        <input class="vocab-edit-field" id="ef-def-${v.id}" placeholder="Definisi" value="${esc(v.definition||'')}">
+        <input class="vocab-edit-field" id="ef-syn-${v.id}" placeholder="Sinonim (pisahkan koma)" value="${esc((v.synonyms||[]).join(', '))}">
+        <div class="vocab-edit-actions">
+          <button class="btn btn-primary" style="font-size:.76rem;padding:6px 14px" onclick="saveVocabEdit(${v.id})">Simpan</button>
+          <button class="btn btn-ghost" style="font-size:.76rem;padding:6px 14px" onclick="toggleEditForm(${v.id})">Batal</button>
+        </div>
+      </div>
     </div>`).join('');
 }
 
-function delVocab(i){ vocab.splice(i,1); saveVocab(); renderVocab(); updateBadge(); setupQuiz(); }
-
-function clearAll() {
-  if(!vocab.length||!confirm('Hapus semua kosakata?')) return;
-  vocab=[]; saveVocab(); renderVocab(); updateBadge(); setupQuiz(); toast('Semua kosakata dihapus');
+function toggleEditForm(id){
+  const ef=document.getElementById('vedit-'+id);
+  if(ef) ef.style.display=ef.style.display==='none'?'block':'none';
 }
 
-function setupQuiz() {
-  const qz=document.getElementById('fc-quiz');
-  const em=document.getElementById('fc-empty');
-  if(!vocab.length){ if(qz) qz.style.display='none'; if(em) em.style.display='block'; return; }
-  if(em) em.style.display='none';
-  if(qz) qz.style.display='flex';
-  shuffled=[...vocab].sort(()=>Math.random()-.5);
-  fcIdx=0; fcFlipped=false; showCard(0);
+async function saveVocabEdit(id){
+  const entry=await dbGet('vocabulary',id);
+  if(!entry) return;
+  entry.id_trans=document.getElementById('ef-trans-'+id)?.value?.trim()||entry.id_trans;
+  entry.definition=document.getElementById('ef-def-'+id)?.value?.trim()||'';
+  const synRaw=document.getElementById('ef-syn-'+id)?.value?.trim()||'';
+  entry.synonyms=synRaw?synRaw.split(',').map(s=>s.trim()).filter(Boolean):[];
+  await updateVocabEntry(entry);
+  toast('Kata berhasil diperbarui');
+  renderVocabList(currentFolderBookId);
 }
 
-function showCard(i) {
-  if(!shuffled.length) return;
-  const v=shuffled[i];
-  document.getElementById('fc-word').textContent  = v.en;
-  document.getElementById('fc-trans').textContent = v.id;
-  document.getElementById('fc-counter').textContent=(i+1)+' / '+shuffled.length;
-  fcFlipped=false; document.getElementById('card3d').classList.remove('flipped');
+async function delVocabEntry(id){
+  await deleteVocabEntry(id);
+  toast('Kata dihapus');
+  updateBadge();
+  renderVocabList(currentFolderBookId);
 }
 
-function flipCard()  { fcFlipped=!fcFlipped; document.getElementById('card3d').classList.toggle('flipped',fcFlipped); }
-function nextCard()  { if(!shuffled.length) return; fcIdx=(fcIdx+1)%shuffled.length; showCard(fcIdx); }
-function prevCard()  { if(!shuffled.length) return; fcIdx=(fcIdx-1+shuffled.length)%shuffled.length; showCard(fcIdx); }
-
-function switchTab(t) {
-  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',(i===0&&t==='quiz')||(i===1&&t==='list')));
-  document.getElementById('tab-quiz').classList.toggle('active',t==='quiz');
-  document.getElementById('tab-list').classList.toggle('active',t==='list');
-  if(t==='list') renderVocab();
-  if(t==='quiz') setupQuiz();
+async function clearCurrentFolder(){
+  const label=currentFolderBookId===null?'semua kosakata':'kosakata folder ini';
+  if(!confirm(`Hapus ${label}?`)) return;
+  if(currentFolderBookId===null){
+    const all=await getAllVocab();
+    for(const v of all) await dbDel('vocabulary',v.id);
+  }else{
+    await deleteVocabByBook(currentFolderBookId);
+  }
+  updateBadge(); renderVocabList(currentFolderBookId);
+  toast('Kosakata dihapus');
 }
 
-// ──────────────────────────────────────────
-//  UTILS
-// ──────────────────────────────────────────
-function showLoad(msg){ document.getElementById('ld-txt').textContent=msg||'Memuat…'; document.getElementById('loading').classList.add('show'); }
-function hideLoad()   { document.getElementById('loading').classList.remove('show'); }
+/* ═══ QUIZ SYSTEM ═══ */
+let quizQuestions=[], quizIndex=0, quizScore=0, quizAnswered=false, quizSelectedFolder=null;
+
+async function renderQuizSetup(){
+  document.getElementById('quiz-status-lbl').textContent='';
+  const all=await getAllVocab();
+  const folderMap={};
+  for(const bk of books){
+    const cnt=all.filter(v=>v.bookId===bk.id).length;
+    if(cnt>0) folderMap[bk.id]={title:bk.title,count:cnt};
+  }
+  const manualCnt=all.filter(v=>v.bookId==='manual').length;
+  if(manualCnt>0) folderMap['manual']={title:'Manual / Tanpa Buku',count:manualCnt};
+
+  let foldersHtml='';
+  for(const [id,info] of Object.entries(folderMap)){
+    foldersHtml+=`<label class="quiz-folder-opt">
+      <input type="radio" name="qfolder" value="${esc(id)}" ${Object.keys(folderMap)[0]===id?'checked':''}>
+      <div><div class="quiz-folder-opt-name">${esc(info.title)}</div><div class="quiz-folder-opt-cnt">${info.count} kata</div></div>
+    </label>`;
+  }
+
+  document.getElementById('quiz-body').innerHTML=`
+    <div class="quiz-setup">
+      <div>
+        <div class="quiz-setup-title" style="margin-bottom:4px">Pilih Folder Kuis</div>
+        <p style="font-size:.82rem;color:var(--text3);margin-bottom:14px">Kuis mengacak 3 tipe soal: pilihan ganda, sinonim/antonim, dan fill-in-the-blank.</p>
+        <div class="quiz-folder-opts">
+          <label class="quiz-folder-opt">
+            <input type="radio" name="qfolder" value="all" checked>
+            <div><div class="quiz-folder-opt-name">📚 Semua Kata</div><div class="quiz-folder-opt-cnt">${all.length} kata</div></div>
+          </label>
+          ${foldersHtml}
+        </div>
+      </div>
+      <div>
+        <div class="quiz-setup-title">Jumlah Soal</div>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          ${[5,10,15,20].map((n,i)=>`<label style="flex:1;text-align:center;padding:10px;border:1.5px solid var(--border);border-radius:var(--r-sm);cursor:pointer;font-size:.85rem;background:var(--bg2)"><input type="radio" name="qcount" value="${n}" ${i===1?'checked':''} style="display:none"> ${n}</label>`).join('')}
+        </div>
+      </div>
+      ${all.length<2?`<div style="padding:12px;background:var(--accent-lt);border-radius:var(--r-sm);font-size:.84rem;color:var(--accent)">⚠️ Kamu perlu minimal 4 kata untuk memulai kuis. Saat ini ada ${all.length} kata.</div>`:`<button class="btn btn-accent" style="font-size:.9rem;padding:12px 28px;align-self:center" onclick="startQuiz()">Mulai Kuis →</button>`}
+    </div>`;
+}
+
+async function startQuiz(){
+  const folderVal=document.querySelector('input[name="qfolder"]:checked')?.value||'all';
+  const countVal=parseInt(document.querySelector('input[name="qcount"]:checked')?.value||10);
+  quizSelectedFolder=folderVal;
+  let pool=folderVal==='all'?await getAllVocab():await getVocabByBook(folderVal);
+  if(pool.length<4){toast('Perlu minimal 4 kata untuk kuis');return}
+  // Shuffle pool
+  pool=[...pool].sort(()=>Math.random()-.5);
+  const count=Math.min(countVal,pool.length);
+  const qPool=pool.slice(0,count);
+  const allForOptions=await getAllVocab();
+  quizQuestions=generateQuestions(qPool,allForOptions);
+  quizIndex=0; quizScore=0; quizAnswered=false;
+  renderQuestion();
+}
+
+function generateQuestions(qPool,allVocab){
+  const questions=[];
+  const types=['meaning','fill'];
+  const hasSynAnt=qPool.some(v=>v.synonyms?.length||v.antonyms?.length);
+  for(const v of qPool){
+    const roll=Math.random();
+    let type;
+    if(roll<0.4) type='meaning';
+    else if(roll<0.7&&v.example) type='fill';
+    else if(hasSynAnt&&roll<0.85&&(v.synonyms?.length||v.antonyms?.length)) type='synonym';
+    else type='meaning';
+    questions.push({type,vocab:v,allVocab});
+  }
+  return questions;
+}
+
+function renderQuestion(){
+  if(quizIndex>=quizQuestions.length){renderQuizResult();return}
+  const q=quizQuestions[quizIndex];
+  const pct=Math.round((quizIndex/quizQuestions.length)*100);
+  document.getElementById('quiz-status-lbl').textContent=`${quizIndex+1}/${quizQuestions.length}`;
+  let html=`<div class="quiz-progress-bar"><div class="quiz-progress-fill" style="width:${pct}%"></div></div>`;
+
+  if(q.type==='meaning') html+=buildMeaningQ(q);
+  else if(q.type==='fill') html+=buildFillQ(q);
+  else html+=buildSynonymQ(q);
+
+  html+=`<div id="quiz-feedback" style="display:none;margin-top:12px;padding:12px 16px;border-radius:var(--r-md);font-size:.88rem;line-height:1.5"></div>
+    <div id="quiz-next-wrap" style="display:none;margin-top:14px;text-align:center">
+      <button class="btn btn-accent" onclick="nextQuestion()">Soal Berikutnya →</button>
+    </div>`;
+  document.getElementById('quiz-body').innerHTML=html;
+
+  // Style radio labels for count selector effect
+  if(q.type==='fill'){
+    document.getElementById('fill-input')?.focus();
+  }
+}
+
+function buildMeaningQ(q){
+  const v=q.vocab;
+  const distractors=q.allVocab.filter(x=>x.id!==v.id&&x.id_trans&&x.id_trans!==v.id_trans).sort(()=>Math.random()-.5).slice(0,3);
+  const opts=[{text:v.id_trans||'—',correct:true},...distractors.map(d=>({text:d.id_trans,correct:false}))].sort(()=>Math.random()-.5);
+  return `<div class="quiz-question-card">
+    <div class="quiz-type-badge">Tebak Arti</div>
+    <div class="quiz-question-text">Apa arti dari kata <strong>"${esc(v.en)}"</strong>?</div>
+    ${v.definition?`<div class="quiz-sentence">Definisi: ${esc(v.definition.substring(0,100))}…</div>`:''}
+    <div class="quiz-options">
+      ${opts.map((o,i)=>`<button class="quiz-option" onclick="checkAnswer(this,${o.correct},'${esc(v.id_trans||'')}')">
+        ${String.fromCharCode(65+i)}. ${esc(o.text)}
+      </button>`).join('')}
+    </div>
+  </div>`;
+}
+
+function buildSynonymQ(q){
+  const v=q.vocab;
+  const hasSyn=v.synonyms?.length>0;
+  const isAnt=!hasSyn&&v.antonyms?.length>0;
+  const targets=hasSyn?v.synonyms:v.antonyms;
+  const correctAnswer=targets[0];
+  const distractors=q.allVocab.filter(x=>x.id!==v.id&&x.en!==correctAnswer).sort(()=>Math.random()-.5).slice(0,3).map(d=>d.en);
+  const opts=[correctAnswer,...distractors].sort(()=>Math.random()-.5);
+  return `<div class="quiz-question-card">
+    <div class="quiz-type-badge">${hasSyn?'Sinonim':'Antonim'}</div>
+    <div class="quiz-question-text">Pilih kata yang merupakan <strong>${hasSyn?'sinonim (persamaan)':'antonim (lawan kata)'}</strong> dari <strong>"${esc(v.en)}"</strong>:</div>
+    ${v.id_trans?`<div class="quiz-sentence">Arti: ${esc(v.id_trans)}</div>`:''}
+    <div class="quiz-options">
+      ${opts.map((o,i)=>`<button class="quiz-option" onclick="checkAnswer(this,${o===correctAnswer},'${esc(correctAnswer)}')">
+        ${String.fromCharCode(65+i)}. ${esc(o)}
+      </button>`).join('')}
+    </div>
+  </div>`;
+}
+
+function buildFillQ(q){
+  const v=q.vocab;
+  const sentence=v.example||`The word "${v.en}" is used in English.`;
+  const blank=sentence.replace(new RegExp(v.en,'gi'),'_____');
+  return `<div class="quiz-question-card">
+    <div class="quiz-type-badge">Fill in the Blank</div>
+    <div class="quiz-question-text">Lengkapi kalimat berikut:</div>
+    <div class="quiz-sentence">${esc(blank)}</div>
+    <div style="margin-top:4px;font-size:.78rem;color:var(--text3)">Petunjuk: ${esc(v.id_trans||'—')}</div>
+    <input class="quiz-fill-input" id="fill-input" placeholder="Ketik jawaban…" onkeydown="if(event.key==='Enter') checkFill('${esc(v.en)}')">
+    <button class="btn btn-primary" style="font-size:.82rem;padding:8px 18px" onclick="checkFill('${esc(v.en)}')">Periksa</button>
+  </div>`;
+}
+
+function checkAnswer(btn,correct,correctText){
+  if(quizAnswered) return;
+  quizAnswered=true;
+  document.querySelectorAll('.quiz-option').forEach(b=>b.disabled=true);
+  btn.classList.add(correct?'correct':'wrong');
+  if(!correct){
+    document.querySelectorAll('.quiz-option').forEach(b=>{
+      if(b.textContent.includes(correctText)) b.classList.add('correct');
+    });
+  }
+  if(correct) quizScore++;
+  showQuizFeedback(correct,correctText);
+}
+
+function checkFill(correctWord){
+  if(quizAnswered) return;
+  const input=document.getElementById('fill-input');
+  if(!input) return;
+  const answer=input.value.trim().toLowerCase();
+  const correct=answer===correctWord.toLowerCase();
+  quizAnswered=true;
+  input.disabled=true;
+  input.classList.add(correct?'correct':'wrong');
+  if(correct) quizScore++;
+  showQuizFeedback(correct,correctWord);
+}
+
+function showQuizFeedback(correct,correctText){
+  const fb=document.getElementById('quiz-feedback');
+  const nw=document.getElementById('quiz-next-wrap');
+  if(fb){
+    fb.style.display='block';
+    fb.style.background=correct?'var(--green-lt)':'var(--accent-lt)';
+    fb.style.color=correct?'var(--green)':'var(--accent)';
+    fb.innerHTML=correct?`✓ Benar! Jawaban: <strong>${esc(correctText)}</strong>`:`✗ Salah. Jawaban yang benar: <strong>${esc(correctText)}</strong>`;
+  }
+  if(nw) nw.style.display='block';
+}
+
+function nextQuestion(){
+  quizIndex++;
+  quizAnswered=false;
+  renderQuestion();
+}
+
+function renderQuizResult(){
+  const total=quizQuestions.length;
+  const pct=Math.round((quizScore/total)*100);
+  const emoji=pct>=90?'🏆':pct>=70?'🎉':pct>=50?'😊':'💪';
+  document.getElementById('quiz-status-lbl').textContent='Selesai!';
+  document.getElementById('quiz-body').innerHTML=`
+    <div style="max-width:400px;margin:0 auto">
+      <div class="quiz-score-card">
+        <div class="quiz-score-emoji">${emoji}</div>
+        <div class="quiz-score-num">${quizScore}/${total}</div>
+        <div class="quiz-score-lbl">${pct}% Benar</div>
+        <div class="quiz-score-detail">${pct>=70?'Kerja bagus! Terus berlatih 💪':'Jangan menyerah, coba lagi!'}</div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:20px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-accent" onclick="startQuiz()">🔄 Ulangi Kuis</button>
+        <button class="btn btn-ghost" onclick="renderQuizSetup()">← Pilih Folder Lain</button>
+        <button class="btn btn-ghost" onclick="showView('fc-view');renderFolders()">📝 Lihat Kosakata</button>
+      </div>
+    </div>`;
+}
+
+/* ═══ UTILS ═══ */
+function showLoad(msg){document.getElementById('ld-txt').textContent=msg||'Memuat…';document.getElementById('loading').classList.add('show')}
+function hideLoad(){document.getElementById('loading').classList.remove('show')}
 let _tt;
-function toast(msg)   { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(_tt); _tt=setTimeout(()=>t.classList.remove('show'),2800); }
-function esc(s)       { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),2800)}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 </script>
 </body>
 </html>

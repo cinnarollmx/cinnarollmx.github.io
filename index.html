@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>LexiRead Pro v2</title>
+<title>LexiRead Pro v4</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -292,6 +292,39 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .folder-count{font-size:.74rem;color:var(--text3);margin-top:2px}
 .folder-arrow{color:var(--text3);font-size:.9rem}
 
+/* ═══ ROOT WORD FOLDER ═══ */
+.root-folder-section{padding:16px 24px 8px}
+.root-folder-section-lbl{font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:10px;display:flex;align-items:center;gap:10px}
+.root-folder-section-lbl::after{content:'';flex:1;height:1px;background:var(--border)}
+.root-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.root-card{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:14px 10px;background:linear-gradient(135deg,#fdf6e3,var(--bg2));
+  border:1.5px solid #d4b89644;border-radius:var(--r-md);cursor:pointer;
+  transition:var(--tr);text-align:center;gap:4px;
+}
+.root-card:hover{border-color:#b7950b;background:linear-gradient(135deg,#fef9ec,var(--bg));box-shadow:var(--sh-sm);transform:translateY(-2px)}
+.root-card-name{font-family:'Lora',serif;font-size:.92rem;font-weight:700;color:#784212;letter-spacing:.03em}
+.root-card-count{font-size:.7rem;color:var(--text3);margin-top:1px}
+.root-card-words{font-size:.65rem;color:#b7950b;margin-top:2px;line-height:1.4;max-height:2.6em;overflow:hidden}
+[data-theme="dark"] .root-card{background:linear-gradient(135deg,#2a2410,var(--bg2));border-color:#4a3a1a44}
+[data-theme="dark"] .root-card:hover{border-color:#b7950b;background:linear-gradient(135deg,#352f18,var(--bg2))}
+[data-theme="dark"] .root-card-name{color:#d4a84b}
+
+/* Root family panel header badge */
+.root-meaning-badge{
+  display:inline-block;font-size:.72rem;padding:2px 10px;border-radius:100px;
+  background:linear-gradient(90deg,#fef3c7,#fde68a);color:#92400e;
+  border:1px solid #f59e0b44;font-weight:600;margin-left:6px;
+}
+.root-family-word-card{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:11px 14px;background:var(--bg2);border:1.5px solid var(--border);
+  border-radius:var(--r-sm);transition:var(--tr);margin-bottom:8px;
+  border-left:3px solid #b7950b;
+}
+.root-family-word-card:hover{border-color:#b7950b;background:var(--bg);box-shadow:var(--sh-sm)}
+
 /* Vocab list panel */
 #vocab-panel{flex:1;display:flex;flex-direction:column;overflow:hidden}
 .vocab-panel-header{display:flex;align-items:center;gap:10px;padding:14px 24px;border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap}
@@ -451,7 +484,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   <div class="lib-header">
     <div class="brand">
       <div class="brand-name">Lexi<span>Read</span><sup>Pro</sup></div>
-      <div class="brand-sub">EPUB Reader & Vocabulary Trainer v2</div>
+      <div class="brand-sub">EPUB Reader & Vocabulary Trainer v4</div>
     </div>
     <div class="header-actions">
       <button class="btn btn-ghost" onclick="showView('fc-view');renderFolders()">
@@ -537,6 +570,19 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   <!-- Folder panel -->
   <div id="folder-panel" style="flex:1;overflow-y:auto">
     <div class="folder-list" id="folder-list"></div>
+    <!-- Root Word Folder Section -->
+    <div class="root-folder-section" id="root-folder-section" style="display:none">
+      <div class="root-folder-section-lbl">🌳 Root Word Families</div>
+      <div class="root-grid" id="root-grid"></div>
+    </div>
+  </div>
+  <!-- Root Word Family panel -->
+  <div id="root-family-panel" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+    <div class="vocab-panel-header">
+      <button class="btn btn-ghost btn-icon" style="width:34px;height:34px;font-size:.85rem" onclick="showFolderPanel()">←</button>
+      <div class="vocab-panel-title" id="root-family-title">Root Family</div>
+    </div>
+    <div class="vocab-list-scroll" id="root-family-scroll"></div>
   </div>
   <!-- Vocab panel (hidden initially) -->
   <div id="vocab-panel" style="display:none">
@@ -1295,6 +1341,73 @@ async function saveManual(){
   await saveToFC();
 }
 
+/* ═══════════════════════════════════════════
+   ROOTWORD + SRS ENGINE
+═══════════════════════════════════════════ */
+const ROOT_LIST=[
+  'spect','struct','ject','port','dict','scrib','script','graph','form','press',
+  'tract','ceed','cess','mit','pose','pose','duce','vert','vis','vid',
+  'aud','cap','cept','cide','claim','clar','clud','clus','cord','corp',
+  'cred','curr','duc','fac','fer','fid','fin','fix','flex','flu',
+  'fract','frag','gen','grad','gram','gress','hab','her','hes','jud',
+  'junct','leg','lect','lib','loc','log','luc','lumen','magn','man',
+  'mem','merc','migr','miss','mob','mod','mort','mot','mov','nat',
+  'neg','nom','nov','numer','opt','ord','path','ped','pel','pend',
+  'pens','phil','phon','plac','plex','plic','pon','popul','pos','pot',
+  'prim','prob','puls','rupt','scop','sens','sent','sequ','serv','sign',
+  'simil','sol','solv','son','spec','spir','tain','temp','ten','tend',
+  'term','terr','tort','trib','turb','uni','urb','vac','val','ven',
+  'vene','ver','verb','vit','viv','voc','vol','volv'
+];
+
+function detectRoot(word){
+  if(!word) return '';
+  const w=word.toLowerCase().replace(/[^a-z]/g,'');
+  for(const root of ROOT_LIST){
+    if(w.includes(root)) return root;
+  }
+  return '';
+}
+
+/* ─── SRS (Spaced Repetition System) ─── */
+const SRS_INTERVALS=[1,3,7,14,30,60]; // hari
+
+function srsNextInterval(level){
+  return SRS_INTERVALS[Math.min(level,SRS_INTERVALS.length-1)];
+}
+
+function updateSRS(vocabEntry, correct){
+  if(correct){
+    vocabEntry.srsLevel=(vocabEntry.srsLevel||0)+1;
+  } else {
+    vocabEntry.srsLevel=Math.max(0,(vocabEntry.srsLevel||1)-1);
+  }
+  const days=srsNextInterval(vocabEntry.srsLevel);
+  vocabEntry.nextReview=Date.now()+days*86400000;
+  vocabEntry.reviewCount=(vocabEntry.reviewCount||0)+1;
+  vocabEntry.lastReview=Date.now();
+  return vocabEntry;
+}
+
+async function getDueVocab(){
+  const all=await getAllVocab();
+  const now=Date.now();
+  return all.filter(v=>!v.nextReview||v.nextReview<=now);
+}
+
+/* ─── Word Family ─── */
+async function getWordFamily(root){
+  if(!root) return [];
+  const all=await getAllVocab();
+  return all.filter(v=>v.root&&v.root===root);
+}
+
+async function showWordFamily(root){
+  if(!root){toast('Kata ini tidak punya root terdeteksi');return}
+  showView('fc-view');
+  await openRootFamily(root);
+}
+
 async function saveToFC(){
   const en=_currentPopupWord;
   const id=_currentPopupTrans;
@@ -1302,6 +1415,7 @@ async function saveToFC(){
   const bookId=currentBook?.id||'manual';
   const exists=await vocabExists(en,bookId);
   if(exists){toast('Kata sudah ada di folder ini!');return}
+  const root=detectRoot(en);
   const entry={
     en, id_trans:id,
     bookId,
@@ -1310,7 +1424,12 @@ async function saveToFC(){
     synonyms:_currentPopupEntry?.synonyms||[],
     antonyms:_currentPopupEntry?.antonyms||[],
     example:_currentPopupEntry?.example||'',
-    addedAt:Date.now()
+    addedAt:Date.now(),
+    root:root,
+    srsLevel:0,
+    nextReview:Date.now(), // due immediately
+    reviewCount:0,
+    lastReview:null
   };
   await addVocabEntry(entry);
   updateBadge();
@@ -1342,7 +1461,26 @@ async function renderFolders(){
   });
 
   const listEl=document.getElementById('folder-list');
-  let html=`<div class="folder-item" onclick="openVocabPanel(null)">
+
+  // Hitung due words
+  const now=Date.now();
+  const dueCount=all.filter(v=>!v.nextReview||v.nextReview<=now).length;
+
+  let html='';
+
+  // Due Review card — paling atas jika ada
+  if(dueCount>0){
+    html+=`<div class="folder-item" style="border-color:#c0392b33;background:linear-gradient(135deg,#fff5f5,var(--bg2))" onclick="startDueReview()">
+      <div class="folder-icon">🧠</div>
+      <div class="folder-info">
+        <div class="folder-name" style="color:#c0392b">Due Review</div>
+        <div class="folder-count">${dueCount} kata perlu diulang sekarang</div>
+      </div>
+      <div class="folder-arrow" style="color:#c0392b;font-weight:700">›</div>
+    </div>`;
+  }
+
+  html+=`<div class="folder-item" onclick="openVocabPanel(null)">
     <div class="folder-icon">📚</div>
     <div class="folder-info">
       <div class="folder-name">All Vocabulary</div>
@@ -1367,8 +1505,143 @@ async function renderFolders(){
     html='<div style="padding:40px;text-align:center;color:var(--text3)"><div style="font-size:2.5rem;opacity:.3;margin-bottom:12px">📝</div><p>Belum ada kosakata tersimpan.</p><p style="font-size:.8rem;margin-top:6px">Pilih kata saat membaca, lalu simpan.</p></div>';
   }
   listEl.innerHTML=html;
+
+  // Render Root Word section
+  await renderRootWordSection(all);
+
   document.getElementById('folder-panel').style.display='block';
   document.getElementById('vocab-panel').style.display='none';
+  document.getElementById('root-family-panel').style.display='none';
+}
+
+/* ═══ ROOT WORD FOLDER SECTION ═══ */
+
+// Definisi arti root (ringkas)
+const ROOT_MEANINGS={
+  'spect':'lihat','struct':'bangun','ject':'lempar','port':'bawa','dict':'ucap',
+  'scrib':'tulis','script':'tulis','graph':'tulis/gambar','form':'bentuk','press':'tekan',
+  'tract':'tarik','ceed':'pergi','cess':'pergi','mit':'kirim','duc':'pimpin',
+  'vert':'putar/balik','vis':'lihat','vid':'lihat','aud':'dengar','cap':'ambil',
+  'cept':'ambil','cide':'bunuh/potong','claim':'seru','clar':'jelas','clud':'tutup',
+  'clus':'tutup','cord':'hati','corp':'tubuh','cred':'percaya','curr':'lari',
+  'fac':'buat','fer':'bawa','fid':'percaya','fin':'akhir','fix':'pasang',
+  'flex':'lentur','flu':'alir','fract':'patah','frag':'patah','gen':'lahir/jenis',
+  'grad':'langkah','gram':'tulis','gress':'langkah','hab':'miliki','her':'tempel',
+  'hes':'tempel','jud':'hakim','junct':'hubung','leg':'pilih/hukum','lect':'pilih',
+  'lib':'bebas','loc':'tempat','log':'kata/ilmu','luc':'cahaya','lumen':'cahaya',
+  'magn':'besar','man':'tangan','mem':'ingat','merc':'dagang','migr':'pindah',
+  'miss':'kirim','mob':'gerak','mod':'ukur','mort':'mati','mot':'gerak',
+  'mov':'gerak','nat':'lahir','neg':'tolak','nom':'nama','nov':'baru',
+  'numer':'angka','opt':'pilih','ord':'atur','path':'rasa/penyakit','ped':'kaki',
+  'pel':'dorong','pend':'gantung','pens':'pikir/bayar','phil':'cinta','phon':'suara',
+  'plac':'tenang','plex':'lipat','plic':'lipat','pon':'taruh','popul':'rakyat',
+  'pos':'taruh','pot':'kuasa','prim':'pertama','prob':'uji','puls':'dorong',
+  'rupt':'patah','scop':'lihat','sens':'rasa','sent':'rasa','sequ':'ikut',
+  'serv':'jaga','sign':'tanda','simil':'sama','sol':'sendirian','solv':'lepas',
+  'son':'suara','spec':'lihat','spir':'nafas','tain':'pegang','temp':'waktu',
+  'ten':'pegang','tend':'regangkan','term':'batas/akhir','terr':'bumi','tort':'putar',
+  'trib':'beri','turb':'ganggu','uni':'satu','urb':'kota','vac':'kosong',
+  'val':'kuat/nilai','ven':'datang','vene':'racun','ver':'benar','verb':'kata',
+  'vit':'hidup','viv':'hidup','voc':'suara/panggil','vol':'ingin','volv':'gulung',
+  'pose':'taruh','duce':'pimpin'
+};
+
+async function renderRootWordSection(allVocab){
+  // Group vocab by root
+  const rootMap={};
+  for(const v of allVocab){
+    if(!v.root) continue;
+    if(!rootMap[v.root]) rootMap[v.root]=[];
+    rootMap[v.root].push(v);
+  }
+  const roots=Object.keys(rootMap).sort((a,b)=>rootMap[b].length-rootMap[a].length);
+  const sec=document.getElementById('root-folder-section');
+  const grid=document.getElementById('root-grid');
+  if(!roots.length){sec.style.display='none';return}
+  sec.style.display='block';
+  grid.innerHTML=roots.map(root=>{
+    const words=rootMap[root];
+    const meaning=ROOT_MEANINGS[root]||'';
+    const preview=words.slice(0,3).map(v=>v.en).join(', ')+(words.length>3?'…':'');
+    return `<div class="root-card" onclick="openRootFamily('${esc(root)}')">
+      <div style="font-size:1.4rem">🌳</div>
+      <div class="root-card-name">-${esc(root)}-</div>
+      ${meaning?`<div style="font-size:.65rem;color:#b7950b;font-weight:600">${esc(meaning)}</div>`:''}
+      <div class="root-card-count">${words.length} kata</div>
+      <div class="root-card-words">${esc(preview)}</div>
+    </div>`;
+  }).join('');
+}
+
+async function openRootFamily(root){
+  const all=await getAllVocab();
+  const words=all.filter(v=>v.root===root);
+  const meaning=ROOT_MEANINGS[root]||'';
+
+  // Switch panels
+  document.getElementById('folder-panel').style.display='none';
+  document.getElementById('vocab-panel').style.display='none';
+  const panel=document.getElementById('root-family-panel');
+  panel.style.display='flex';
+
+  // Title
+  const titleEl=document.getElementById('root-family-title');
+  titleEl.innerHTML=`🌳 Root: <strong>${esc(root)}</strong>${meaning?`<span class="root-meaning-badge">= ${esc(meaning)}</span>`:''}`;
+
+  const el=document.getElementById('root-family-scroll');
+
+  if(!words.length){
+    el.innerHTML=`<div style="padding:30px;text-align:center;color:var(--text3)">
+      <div style="font-size:2rem;opacity:.3">🌳</div>
+      <p style="margin-top:8px">Tidak ada kata dengan root "<strong>${esc(root)}</strong>".</p>
+    </div>`;
+    return;
+  }
+
+  // Build explanation header
+  const header=`<div style="margin-bottom:16px;padding:14px 16px;background:linear-gradient(135deg,#fef9ec,#fdf6e3);border:1.5px solid #f59e0b44;border-radius:var(--r-md)">
+    <div style="font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#92400e;margin-bottom:4px">Root Word</div>
+    <div style="font-family:'Lora',serif;font-size:1.15rem;font-weight:700;color:#784212">-${esc(root)}-</div>
+    ${meaning?`<div style="font-size:.82rem;color:#b45309;margin-top:2px">Makna dasar: <strong>${esc(meaning)}</strong></div>`:''}
+    <div style="font-size:.78rem;color:var(--text3);margin-top:6px;line-height:1.5">Kata-kata di bawah ini berbagi root yang sama, sehingga memiliki makna yang berhubungan.</div>
+    <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:5px">
+      ${words.map(v=>`<span style="font-size:.72rem;padding:2px 9px;border-radius:100px;background:#fde68a44;color:#92400e;border:1px solid #f59e0b33">${esc(v.en)}</span>`).join('')}
+    </div>
+  </div>`;
+
+  const now=Date.now();
+  const wordCards=words.map(v=>{
+    const isDue=!v.nextReview||v.nextReview<=now;
+    const srsLv=v.srsLevel||0;
+    const srsLabel=['Baru','Hari 3','Minggu 1','Minggu 2','Bulan 1','Bulan 2','Hafal'][Math.min(srsLv,6)];
+    const srsColor=srsLv===0?'#9a8e78':srsLv<=2?'#2471a3':srsLv<=4?'#1e8449':'#7d3c98';
+    return `<div class="root-family-word-card">
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <div class="vocab-en" style="font-size:1rem">${esc(v.en)}</div>
+          <span style="font-size:.62rem;padding:1px 7px;border-radius:100px;border:1px solid ${srsColor}22;color:${srsColor};background:${srsColor}11">${srsLabel}</span>
+          ${isDue?`<span style="font-size:.62rem;color:#c0392b;font-weight:600">● Due</span>`:''}
+        </div>
+        <div style="font-size:.85rem;color:var(--text2);margin-top:3px">${esc(v.id_trans||'—')}</div>
+        ${v.definition?`<div class="vocab-def" style="margin-top:3px">${esc(v.definition)}</div>`:''}
+        ${v.example?`<div style="font-size:.76rem;color:var(--text3);font-style:italic;margin-top:3px;line-height:1.4">"${esc(v.example)}"</div>`:''}
+        ${v.synonyms?.length?`<div class="vocab-syn" style="margin-top:4px">≈ ${v.synonyms.slice(0,4).map(esc).join(', ')}</div>`:''}
+        <div style="font-size:.64rem;color:var(--text3);margin-top:3px">📖 ${esc(v.bookTitle||'Manual')}</div>
+      </div>
+      <div class="vocab-actions">
+        <button class="vocab-del-btn" onclick="delVocabEntryFromRoot(${v.id},'${esc(root)}')" title="Hapus">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  el.innerHTML=header+wordCards;
+}
+
+async function delVocabEntryFromRoot(id,root){
+  await deleteVocabEntry(id);
+  toast('Kata dihapus');
+  updateBadge();
+  openRootFamily(root); // re-render
 }
 
 function switchFcTab(tab){
@@ -1381,6 +1654,7 @@ async function openVocabPanel(bookId){
   currentFolderBookId=bookId;
   document.getElementById('folder-panel').style.display='none';
   document.getElementById('vocab-panel').style.display='flex';
+  document.getElementById('root-family-panel').style.display='none';
   const title=bookId===null?'All Vocabulary':(books.find(b=>b.id===bookId)?.title||'Kosakata');
   document.getElementById('vocab-panel-title').textContent=title;
   await renderVocabList(bookId);
@@ -1389,6 +1663,7 @@ async function openVocabPanel(bookId){
 function showFolderPanel(){
   document.getElementById('folder-panel').style.display='block';
   document.getElementById('vocab-panel').style.display='none';
+  document.getElementById('root-family-panel').style.display='none';
   renderFolders();
 }
 
@@ -1400,7 +1675,13 @@ async function renderVocabList(bookId){
     el.innerHTML='<div style="padding:30px;text-align:center;color:var(--text3)"><div style="font-size:2rem;opacity:.3">📝</div><p style="margin-top:8px">Belum ada kata di folder ini.</p></div>';
     return;
   }
-  el.innerHTML=items.map(v=>`
+  const now=Date.now();
+  el.innerHTML=items.map(v=>{
+    const isDue=!v.nextReview||v.nextReview<=now;
+    const srsLv=v.srsLevel||0;
+    const srsLabel=['Baru','Hari 3','Minggu 1','Minggu 2','Bulan 1','Bulan 2','Hafal'][Math.min(srsLv,6)];
+    const srsColor=srsLv===0?'#9a8e78':srsLv<=2?'#2471a3':srsLv<=4?'#1e8449':'#7d3c98';
+    return `
     <div class="vocab-item" id="vitem-${v.id}">
       <div class="vocab-en">${esc(v.en)}</div>
       <div class="vocab-sep"></div>
@@ -1408,7 +1689,12 @@ async function renderVocabList(bookId){
         <div class="vocab-id">${esc(v.id_trans||'—')}</div>
         ${v.definition?`<div class="vocab-def">${esc(v.definition)}</div>`:''}
         ${v.synonyms?.length?`<div class="vocab-syn">≈ ${v.synonyms.slice(0,3).map(esc).join(', ')}</div>`:''}
-        ${bookId===null?`<div style="font-size:.68rem;color:var(--text3);margin-top:2px">📖 ${esc(v.bookTitle||'')}</div>`:''}
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;align-items:center">
+          ${v.root?`<span onclick="showWordFamily('${esc(v.root)}')" style="font-size:.64rem;padding:1px 7px;border-radius:100px;background:#f0e8d4;color:#784212;cursor:pointer;border:1px solid #d4b896" title="Lihat Word Family">🌳 ${esc(v.root)}</span>`:''}
+          <span style="font-size:.64rem;padding:1px 7px;border-radius:100px;border:1px solid ${srsColor}22;color:${srsColor};background:${srsColor}11">${srsLabel}</span>
+          ${isDue?`<span style="font-size:.62rem;color:#c0392b;font-weight:600">● Due</span>`:''}
+          ${bookId===null?`<span style="font-size:.64rem;color:var(--text3)">📖 ${esc(v.bookTitle||'')}</span>`:''}
+        </div>
       </div>
       <div class="vocab-actions">
         <button class="vocab-edit-btn" onclick="toggleEditForm(${v.id})" title="Edit">✏️</button>
@@ -1425,7 +1711,8 @@ async function renderVocabList(bookId){
           <button class="btn btn-ghost" style="font-size:.76rem;padding:6px 14px" onclick="toggleEditForm(${v.id})">Batal</button>
         </div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function toggleEditForm(id){
@@ -1465,6 +1752,22 @@ async function clearCurrentFolder(){
   toast('Kosakata dihapus');
 }
 
+/* ═══ DUE REVIEW ═══ */
+async function startDueReview(){
+  const due=await getDueVocab();
+  if(due.length<2){
+    toast('Belum ada kata yang perlu direview! 🎉');
+    return;
+  }
+  const all=await getAllVocab();
+  showView('quiz-view');
+  document.getElementById('quiz-status-lbl').textContent='Due Review';
+  quizQuestions=generateQuestions(due.slice(0,20),all);
+  quizIndex=0; quizScore=0; quizAnswered=false;
+  renderQuestion();
+  toast(`🧠 ${due.length} kata perlu direview`);
+}
+
 /* ═══ QUIZ SYSTEM ═══ */
 let quizQuestions=[], quizIndex=0, quizScore=0, quizAnswered=false, quizSelectedFolder=null;
 
@@ -1487,11 +1790,21 @@ async function renderQuizSetup(){
     </label>`;
   }
 
+  const dueCount=all.filter(v=>!v.nextReview||v.nextReview<=Date.now()).length;
+
   document.getElementById('quiz-body').innerHTML=`
     <div class="quiz-setup">
+      ${dueCount>0?`
+      <div style="padding:14px 16px;background:linear-gradient(135deg,#fff0f0,#fff5f5);border:1.5px solid #c0392b44;border-radius:var(--r-md);display:flex;align-items:center;justify-content:space-between;gap:12px">
+        <div>
+          <div style="font-weight:600;color:#c0392b;font-size:.9rem">🧠 ${dueCount} kata Due Review</div>
+          <div style="font-size:.76rem;color:var(--text3);margin-top:2px">Kata-kata yang sudah waktunya diulang</div>
+        </div>
+        <button class="btn btn-accent" style="font-size:.8rem;padding:8px 16px;white-space:nowrap" onclick="startDueReview()">Review Sekarang</button>
+      </div>`:''}
       <div>
         <div class="quiz-setup-title" style="margin-bottom:4px">Pilih Folder Kuis</div>
-        <p style="font-size:.82rem;color:var(--text3);margin-bottom:14px">Kuis mengacak 3 tipe soal: pilihan ganda, sinonim/antonim, dan fill-in-the-blank.</p>
+        <p style="font-size:.82rem;color:var(--text3);margin-bottom:14px">Mengacak 3 tipe soal + SRS otomatis update setiap jawaban.</p>
         <div class="quiz-folder-opts">
           <label class="quiz-folder-opt">
             <input type="radio" name="qfolder" value="all" checked>
@@ -1506,7 +1819,9 @@ async function renderQuizSetup(){
           ${[5,10,15,20].map((n,i)=>`<label style="flex:1;text-align:center;padding:10px;border:1.5px solid var(--border);border-radius:var(--r-sm);cursor:pointer;font-size:.85rem;background:var(--bg2)"><input type="radio" name="qcount" value="${n}" ${i===1?'checked':''} style="display:none"> ${n}</label>`).join('')}
         </div>
       </div>
-      ${all.length<2?`<div style="padding:12px;background:var(--accent-lt);border-radius:var(--r-sm);font-size:.84rem;color:var(--accent)">⚠️ Kamu perlu minimal 4 kata untuk memulai kuis. Saat ini ada ${all.length} kata.</div>`:`<button class="btn btn-accent" style="font-size:.9rem;padding:12px 28px;align-self:center" onclick="startQuiz()">Mulai Kuis →</button>`}
+      ${all.length<2
+        ?`<div style="padding:12px;background:var(--accent-lt);border-radius:var(--r-sm);font-size:.84rem;color:var(--accent)">⚠️ Perlu minimal 2 kata. Saat ini ada ${all.length} kata.</div>`
+        :`<button class="btn btn-accent" style="font-size:.9rem;padding:12px 28px;align-self:center" onclick="startQuiz()">Mulai Kuis →</button>`}
     </div>`;
 }
 
@@ -1626,6 +1941,9 @@ function checkAnswer(btn,correct,correctText){
     });
   }
   if(correct) quizScore++;
+  // SRS update
+  const q=quizQuestions[quizIndex];
+  if(q?.vocab){updateSRS(q.vocab,correct);updateVocabEntry(q.vocab);}
   showQuizFeedback(correct,correctText);
 }
 
@@ -1639,6 +1957,9 @@ function checkFill(correctWord){
   input.disabled=true;
   input.classList.add(correct?'correct':'wrong');
   if(correct) quizScore++;
+  // SRS update
+  const q=quizQuestions[quizIndex];
+  if(q?.vocab){updateSRS(q.vocab,correct);updateVocabEntry(q.vocab);}
   showQuizFeedback(correct,correctWord);
 }
 
